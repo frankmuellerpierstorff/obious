@@ -5,70 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hello, I'm Frank.</title>
 
-   <!-- Satoshi Font (Fontshare) -->
+  <!-- Satoshi Font (Fontshare) -->
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap">
-   <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Satoshi', sans-serif;
-  font-weight: 400;
-  background: radial-gradient(circle at 30% 40%, #f9f9f9, #ffffff);
-  color: rgba(0, 0, 0, 0.85);
-  font-size: clamp(32px, 8vw, 64px);
-  line-height: 1.25;
-  text-align: left;
-}
 
-body {
-    display: flex;
-  justify-content: center;
-  align-items: center;  /* NEU */
-  min-height: 100vh;    /* NEU */
-  box-sizing: border-box;
-}
-
-.container {
-  max-width: 80%;
-  width: 100%;
-  height: auto;          /* ANPASSUNG */
-}
-
-h1 {
-      font-size: 120px;
-      font-weight: 700;
-      margin-bottom: 20px;
-
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Satoshi', sans-serif;
+      font-weight: 400;
+      background: radial-gradient(circle at 30% 40%, #f9f9f9, #ffffff);
+      color: rgba(0, 0, 0, 0.85);
+      font-size: clamp(32px, 8vw, 64px);
+      line-height: 1.25;
+      text-align: left;
+      overflow-x: hidden;
     }
 
-h5 {
-  font-size: clamp(14px, 3vw, 24px);
-  font-weight: 300;
-  margin: 160px 0px 40px 0px;
-}
-  
-   
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10vh 20px;
+      box-sizing: border-box;
+    }
 
-a, a:active, a:visited {
-	color: #000;
-	text-decoration: none;
-	border-bottom: 2px solid #000;
-}
-
-a:hover {
-	border-bottom: none;
-}
+    .container {
+      max-width: 80%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
 
     p {
-      margin: 0 0 1.5em;
+      margin: 0;
     }
-    
+
+    h5 {
+      font-size: clamp(14px, 2vw, 24px);
+      font-weight: 300;
+      margin-top: 10vh; /* Flexibler Abstand */
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    a, a:active, a:visited {
+      color: #000;
+      text-decoration: none;
+      border-bottom: 2px solid #000;
+    }
+
+    a:hover {
+      border-bottom: none;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
- Obvious is a hands-on, no-fluff advisory practice for CEOs, executives, or boards at the intersection of brand building, customer experience, design integration and strategic execution. <a href="mailto:frankmuellerpierstorff@gmail.com">Get in touch</a>
-
+    <p>
+      Obvious is a hands-on, no-fluff advisory practice for CEOs, executives, or boards at the intersection of brand building, customer experience, design integration and strategic execution. 
+      <a href="mailto:frankmuellerpierstorff@gmail.com">Get in touch</a>
+    </p>
     <h5>© 2025 This is Obvious</h5>
   </div>
 </body>
