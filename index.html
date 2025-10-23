@@ -23,8 +23,14 @@
     }
 
     body {
-      padding: 120px 20px 40px 20px;
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 20px;
       box-sizing: border-box;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
 
     .container {
@@ -39,12 +45,7 @@
     }
 
     p {
-      margin: 0 0 2rem 0;
-    }
-
-    h1 {
-      font-weight: 500;
-      margin: 0 0 1rem 0;
+      margin: 0;
     }
 
     h5 {
@@ -63,11 +64,6 @@
     a:hover {
       border-bottom: none;
     }
-
-    .divider {
-      margin: 2rem 0;
-      font-size: clamp(24px, 4vw, 48px);
-    }
   </style>
 </head>
 
@@ -76,7 +72,6 @@
     <p>
       Obvious is a hands-on, no-fluff advisory for CEOs, founders, and boards at the intersection of Design, AI & Purpose — helping create modern brands, bold products, and smart strategies that make a dent.
       <a href="mailto:frank@thisisobvious.com">Get in touch</a>.
-
     </p>
 
     <h5>© 2025 Obvious · <a href="mailto:frank@thisisobvious.com">Contact</a> · <a href="https://www.thisisobvious.com/legal.html" target="_blank">Legal</a></h5>
