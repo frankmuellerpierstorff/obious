@@ -9,74 +9,63 @@
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap">
 
   <style>
+    :root {
+      --text: rgba(0,0,0,0.85);
+      --bg-a: #ffffff;
+      --bg-b: #f7f7f7;
+    }
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Satoshi', sans-serif;
-      font-weight: 400;
-      background: radial-gradient(circle at 30% 40%, #f9f9f9, #ffffff);
-      color: rgba(0, 0, 0, 0.85);
-      font-size: clamp(24px, 8vw, 64px);
+      font-family: "Satoshi", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 30% 40%, var(--bg-b), var(--bg-a));
+      color: var(--text);
       line-height: 1.25;
-      text-align: left;
       overflow-x: hidden;
     }
-
     body {
-      height: 100dvh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0 20px;
-      box-sizing: border-box;
-      overflow-y: auto;
-      overscroll-behavior: contain;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
     }
-
     .container {
       width: 100%;
-      max-width: clamp(90%, 80vw, 1200px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 0 20px;
-      margin: 0 auto;
+      max-width: 1100px;
+      font-size: clamp(22px, 6.5vw, 56px);
     }
-
-    p {
-      margin: 0;
-    }
-
-    h5 {
-      font-size: clamp(16px, 2vw, 24px);
-      font-weight: 400;
-      margin-top: 10vh;
-      color: rgba(0, 0, 0, 0.85);
-    }
-
-    a, a:active, a:visited {
-      color: rgba(0, 0, 0, 0.85);
+    p { margin: 0; }
+    .spacer { height: 1.25em; }
+    a, a:visited {
+      color: var(--text);
       text-decoration: none;
-      border-bottom: 2px solid rgba(0, 0, 0, 0.85);
+      border-bottom: 2px solid var(--text);
     }
-
-    a:hover {
-      border-bottom: none;
+    a:hover { border-bottom: 0; }
+    footer {
+      margin-top: 10vh;
+      font-size: clamp(14px, 1.6vw, 18px);
+      color: var(--text);
     }
+    footer a { border-bottom-width: 1px; }
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <main class="container">
     <p>
-      <strong>Obvious</strong> is a hands-on, no-fluff advisory for CEOs, founders, and boards at the intersection of 
-      <strong>Design, AI & Purpose</strong> — helping shape modern brands, bold experiences, and smart strategies that stand out.
-      <br><br>
-      Collaborations range from sharp sparring sessions to interim leadership. 
-      <a href="mailto:frank@thisisobvious.com">Get in touch</a>.
+      Obvious is a hands-on, no-fluff advisory for CEOs, founders, and boards at the intersection of Design, AI & Purpose — helping create modern brands, bold products, and smart strategies that make a dent.
     </p>
-    <h5>© 2025 Obvious · <a href="mailto:frank@thisisobvious.com">Contact</a> · <a href="https://www.thisisobvious.com/legal.html" target="_blank">Legal</a></h5>
-  </div>
+    <div class="spacer"></div>
+    <p>
+      From sparring sessions to interim leadership. <a href="mailto:frank@thisisobvious.com">Get in touch</a>.
+    </p>
+
+    <footer>
+      © 2025 Obvious · <a href="mailto:frank@thisisobvious.com">Contact</a> ·
+      <a href="https://www.thisisobvious.com/legal.html" target="_blank" rel="noopener">Legal</a>
+    </footer>
+  </main>
 </body>
 </html>
