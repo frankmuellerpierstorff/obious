@@ -4,14 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Obvious</title>
-
-  <!-- Satoshi Font (Fontshare) -->
   <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -23,7 +19,7 @@
       color: rgba(0, 0, 0, 0.85);
     }
 
-    /* Center the content dead-center on the screen */
+    /* Your centered content stays exactly as it was */
     .content {
       position: absolute;
       top: 50%;
@@ -37,16 +33,20 @@
       padding: 0 20px;
     }
 
-    /* Footer fixed bottom-left with 40px padding */
+    /* Only thing changed → footer aligns to same left edge */
     footer {
-      position: fixed;
+      position: absolute;
       bottom: 40px;
-      left: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: clamp(90%, 80vw, 1200px);
+      padding: 0 20px;
       font-size: clamp(14px, 2vw, 20px);
       color: rgba(0, 0, 0, 0.75);
     }
 
-    a, a:active, a:visited {
+    a {
       color: rgba(0, 0, 0, 0.85);
       text-decoration: none;
       border-bottom: 2px solid rgba(0, 0, 0, 0.85);
@@ -61,7 +61,7 @@
 <body>
   <div class="content">
     <p>
-      I sit next to founders, executives or boards to make the hard decisions — product, brand, strategy.
+      I sit next to founders, executives or boards to make the hard decisions — product, brand, strategy.  
       If that’s what you need — <a href="mailto:frank@thisisobvious.com">get in touch</a>.
     </p>
   </div>
