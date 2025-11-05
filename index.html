@@ -16,32 +16,32 @@
     html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
       height: 100%;
       font-family: 'Satoshi', sans-serif;
       background: radial-gradient(circle at 30% 40%, #f9f9f9, #ffffff);
       color: rgba(0, 0, 0, 0.85);
     }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* Centers the main text vertically */
-      align-items: center;
+    /* Center the content dead-center on the screen */
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      max-width: clamp(90%, 80vw, 1200px);
       font-size: clamp(24px, 8vw, 64px);
       line-height: 1.25;
       text-align: left;
-      overflow-x: hidden;
       padding: 0 20px;
     }
 
-    .content {
-      max-width: clamp(90%, 80vw, 1200px);
-      width: 100%;
-    }
-
+    /* Footer fixed bottom-left with 40px padding */
     footer {
-      margin-top: auto;
-      padding-bottom: 40px;
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
       font-size: clamp(14px, 2vw, 20px);
       color: rgba(0, 0, 0, 0.75);
     }
@@ -61,7 +61,7 @@
 <body>
   <div class="content">
     <p>
-      I sit next to founders, executives or boards to make the hard decisions — product, brand, strategy.  
+      I sit next to founders, executives or boards to make the hard decisions — product, brand, strategy.
       If that’s what you need — <a href="mailto:frank@thisisobvious.com">get in touch</a>.
     </p>
   </div>
