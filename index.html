@@ -2,73 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Obvious</title>
-  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&display=swap">
-
-  <style>
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: 'Satoshi', sans-serif;
-      background: radial-gradient(circle at 30% 40%, #f9f9f9, #ffffff);
-      color: rgba(0, 0, 0, 0.85);
-    }
-
-    /* Your centered content stays exactly as it was */
-    .content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-      max-width: clamp(90%, 80vw, 1200px);
-      font-size: clamp(24px, 8vw, 64px);
-      line-height: 1.25;
-      text-align: left;
-      padding: 0 20px;
-    }
-
-    /* Only thing changed → footer aligns to same left edge */
-    footer {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: clamp(90%, 80vw, 1200px);
-      padding: 0 20px;
-      font-size: clamp(14px, 2vw, 20px);
-      color: rgba(0, 0, 0, 0.75);
-    }
-
-    a {
-      color: rgba(0, 0, 0, 0.85);
-      text-decoration: none;
-      border-bottom: 2px solid rgba(0, 0, 0, 0.85);
-    }
-
-    a:hover {
-      border-bottom: none;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Obvious – Design Partner for Founders and Funds</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
-
 <body>
-  <div class="content">
-    <p>
-      I sit next to founders, executives or boards to make the hard decisions — product, brand, strategy.  
-      If that’s what you need — <a href="mailto:frank@thisisobvious.com">get in touch</a>.
-    </p>
-  </div>
+  <div class="page">
+    <header class="header fade">
+      <div class="header__inner fade-target">
+        <a class="header__label" href="index.html">Obvious</a>
+        <a href="mailto:frank@thisisobvious.com" class="header__contact">Contact</a>
+      </div>
+    </header>
 
-  <footer>
-    © 2025 Obvious · <a href="mailto:frank@thisisobvious.com">Contact</a> · 
-    <a href="https://www.thisisobvious.com/legal.html" target="_blank">Legal</a>
-  </footer>
+    <main>
+      <section class="hero fade snap-section">
+        <div class="container fade-target">
+          <div class="hero__content">
+            <h1 class="hero__headline">Design Partner for<br />Founders &amp; Funds.</h1>
+            <p class="hero__subline">Design &rarr; Focus &rarr; Results</p>
+          </div>
+        </div>
+        <div class="hero__scroll">&#8595;</div>
+      </section>
+
+      <section class="services fade snap-section">
+        <div class="container fade-target">
+          <div class="section__header">
+            <span class="section__eyebrow">Services</span>
+          </div>
+          <div class="two-col">
+            <article class="two-col__item">
+              <h2 class="section__title">For Founders</h2>
+              <p class="section__body">
+                You’re building fast. I help you stay fast with clarity and confidence.<br /><br />
+                <em>What I do</em><br />
+                I work with founders on positioning, product direction, narrative, and brand, and help turn strategy into concrete decisions the team can execute.<br /><br />
+                Design for focus.
+              </p>
+            </article>
+            <article class="two-col__item">
+              <h2 class="section__title">For Funds</h2>
+              <p class="section__body">
+                Strong companies grow from clear direction.<br /><br />
+                <em>What I do</em><br />
+                I help investors strengthen their portfolio companies with differentiated products and coherent brands that support build, launch, and raise moments.<br /><br />
+                Design for performance.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="approach fade snap-section" data-header-theme="dark">
+        <div class="container fade-target">
+          <div class="section__header">
+            <span class="section__eyebrow">Approach</span>
+          </div>
+          <h2 class="section__title approach__title">
+            Direction is the outcome. Clarity is the way to get there.
+          </h2>
+          <p class="section__body approach__body">
+            I work with founders and investors to create clarity, so direction becomes visible, decisions become aligned, and products deliver real value.
+          </p>
+        </div>
+      </section>
+
+      <section class="image-block image-block--top fade snap-section">
+        <div class="container container--edge fade-target">
+          <figure class="image-block__figure">
+            <img src="img1.png" alt="Team collaborating" />
+          </figure>
+        </div>
+      </section>
+
+      <section class="companies fade snap-section">
+        <div class="container fade-target">
+          <div class="section__header">
+            <span class="section__eyebrow">Selected collaborations</span>
+          </div>
+          <p class="section__title companies__list">
+            I’ve partnered with founders and funds across early-stage ventures and established organisations, including Ananda, Boost, Cherry, BCG, EyeEm, Insempra, and Together.
+          </p>
+        </div>
+      </section>
+
+      <section class="background fade snap-section">
+        <div class="container fade-target">
+          <div class="section__header">
+            <span class="section__eyebrow">Background</span>
+          </div>
+          <p class="section__title background__copy">
+            20+ years of design and product leadership. Five ventures built. Angel investor. Brand architect. TED alumnus.
+          </p>
+        </div>
+      </section>
+
+      <section class="principles fade snap-section">
+        <div class="container fade-target">
+          <div class="section__header">
+            <span class="section__eyebrow">Principles</span>
+          </div>
+          <div class="principles__list">
+            <div class="principles__item">Clarity creates direction.</div>
+            <div class="principles__item">Direction guides decisions.</div>
+            <div class="principles__item">Decisions inform products.</div>
+            <div class="principles__item">Products deliver value.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="image-block image-block--bottom fade snap-section">
+        <div class="container container--edge fade-target">
+          <figure class="image-block__figure">
+            <img src="img2.png" alt="Work session" />
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact" class="footer fade snap-section">
+      <div class="container fade-target">
+        <div class="footer__top">
+          <span class="footer__copy">© 2025 Obvious. All rights reserved.</span>
+          <nav class="footer__links">
+            <a href="https://www.linkedin.com/in/frankmuellerpierstorff/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="legal.html">Legal</a>
+          </nav>
+        </div>
+        <div class="footer__divider"></div>
+        <div class="footer__logo">
+          <img src="logo.png" alt="Obvious logo" />
+        </div>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>
