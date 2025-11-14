@@ -685,6 +685,12 @@ footer.snap-section {
 @media (max-width: 768px) {
   .header {
     padding: 20px 0 0;
+    color: #fbf9f5 !important;
+  }
+
+  .header__label,
+  .header__contact {
+    color: #fbf9f5 !important;
   }
 
   .header__inner {
@@ -773,9 +779,10 @@ footer.snap-section {
     gap: 16px;
   }
 
-  .hero {
+  .hero:not(.legal) {
     height: 100vh;
     min-height: 100vh;
+    max-height: 100vh;
     padding-top: 0;
     padding-bottom: 0;
     align-items: center;
@@ -836,6 +843,21 @@ footer.snap-section {
 }
 
 @media (max-width: 480px) {
+  .header {
+    color: #fbf9f5 !important;
+  }
+
+  .header__label,
+  .header__contact {
+    color: #fbf9f5 !important;
+  }
+
+  .hero:not(.legal) {
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
+  }
+
   .hero__headline {
     font-size: 64px;
     line-height: 1.04;
