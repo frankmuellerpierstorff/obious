@@ -47,11 +47,19 @@ const updateHeaderTheme = () => {
     }) || null;
 
   const theme = activeSection ? activeSection.getAttribute('data-header-theme') : 'light';
+  const label = header.querySelector('.header__label');
+  const contact = header.querySelector('.header__contact');
+  
   if (theme === 'dark') {
     header.classList.add('header--inverse');
+    header.style.color = '#fbf9f5';
+    if (label) label.style.color = '#fbf9f5';
+    if (contact) contact.style.color = '#fbf9f5';
   } else {
     header.classList.remove('header--inverse');
     header.style.color = 'var(--text-dark)';
+    if (label) label.style.color = 'var(--text-dark)';
+    if (contact) contact.style.color = 'var(--text-dark)';
   }
 };
 
@@ -66,4 +74,8 @@ if (header) {
     window.requestAnimationFrame(updateHeaderTheme);
   }, { passive: true });
   window.addEventListener('resize', updateHeaderTheme);
+  // Fix for iOS overscroll - reapply theme when scroll position changes
+  window.addEventListener('touchmove', () => {
+    window.requestAnimationFrame(updateHeaderTheme);
+  }, { passive: true });
 }
