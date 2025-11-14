@@ -72,6 +72,11 @@ body.legal-page {
   transition: background 0.4s ease;
 }
 
+.header__label,
+.header__contact {
+  color: #fbf9f5;
+}
+
 .header--inverse {
   color: #fbf9f5;
 }
@@ -92,12 +97,12 @@ body.legal-page {
   padding: 0 40px;
 }
 
-.legal-page .header {
+body.legal-page .header {
   color: var(--text-dark) !important;
 }
 
-.legal-page .header__label,
-.legal-page .header__contact {
+body.legal-page .header__label,
+body.legal-page .header__contact {
   color: var(--text-dark) !important;
 }
 
