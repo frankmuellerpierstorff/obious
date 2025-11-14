@@ -494,6 +494,10 @@ footer.snap-section {
     padding-top: 0;
   }
 
+  .footer__divider {
+    margin-bottom: 64px;
+  }
+
   .legal {
     padding-top: 200px;
   }
