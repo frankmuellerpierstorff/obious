@@ -29,7 +29,7 @@ body {
   font-family: 'Satoshi', sans-serif;
   font-weight: 400;
   color: var(--text-dark);
-  background: var(--bg-base);
+  background: rgb(30, 0, 255);
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
 }
@@ -290,6 +290,11 @@ footer.snap-section {
   align-items: stretch;
   width: 100vw;
   margin-left: calc(50% - 50vw);
+  background: #d6d8db;
+}
+
+.image-block--top {
+  background: #120f08;
 }
 
 .image-block .container--edge {
@@ -773,10 +778,9 @@ footer.snap-section {
     gap: 16px;
   }
 
-  .hero:not(.legal) {
+  .hero {
     height: 100vh;
     min-height: 100vh;
-    max-height: 100vh;
     padding-top: 0;
     padding-bottom: 0;
     align-items: center;
@@ -838,10 +842,9 @@ footer.snap-section {
 
 @media (max-width: 480px) {
 
-  .hero:not(.legal) {
+  .hero {
     height: 100vh;
     min-height: 100vh;
-    max-height: 100vh;
   }
 
   .hero__headline {
