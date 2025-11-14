@@ -93,11 +93,12 @@ body.legal-page {
 }
 
 .legal-page .header {
-  color: var(--text-dark);
+  color: var(--text-dark) !important;
 }
 
-.legal-page .header__label {
-  color: inherit;
+.legal-page .header__label,
+.legal-page .header__contact {
+  color: var(--text-dark) !important;
 }
 
 .header__inner {
