@@ -51,11 +51,17 @@ const updateHeaderTheme = () => {
     header.classList.add('header--inverse');
   } else {
     header.classList.remove('header--inverse');
+    header.style.color = 'var(--text-dark)';
   }
 };
 
 if (header) {
-  updateHeaderTheme();
+  // Run immediately on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateHeaderTheme);
+  } else {
+    updateHeaderTheme();
+  }
   window.addEventListener('scroll', () => {
     window.requestAnimationFrame(updateHeaderTheme);
   }, { passive: true });
