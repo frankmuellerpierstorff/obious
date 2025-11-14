@@ -510,6 +510,10 @@ footer.snap-section {
     --gutter: 200px;
   }
 
+  .section__eyebrow {
+    font-size: 32px;
+  }
+
   .hero__headline {
     font-size: 190px;
     line-height: 1.04;
