@@ -1,6 +1,53 @@
 // Fade / slide handling
 document.documentElement.classList.add('js');
 
+// Set hero height to viewport height (mobile only)
+const setHeroViewportHeight = () => {
+  const hero = document.querySelector('.hero:not(.legal)');
+  if (!hero) return;
+  
+  // Only apply on mobile (max-width: 768px)
+  if (window.innerWidth <= 768) {
+    const viewportHeight = window.innerHeight;
+    hero.style.height = `${viewportHeight}px`;
+    hero.style.minHeight = `${viewportHeight}px`;
+    hero.style.maxHeight = `${viewportHeight}px`;
+  } else {
+    // Reset for desktop
+    hero.style.height = '';
+    hero.style.minHeight = '';
+    hero.style.maxHeight = '';
+  }
+};
+
+// Run immediately and on load/resize
+const initHeroHeight = () => {
+  setHeroViewportHeight();
+};
+
+// Run immediately if DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHeroHeight);
+} else {
+  initHeroHeight();
+}
+
+window.addEventListener('resize', () => {
+  window.requestAnimationFrame(setHeroViewportHeight);
+}, { passive: true });
+
+// Also update on orientation change (mobile)
+window.addEventListener('orientationchange', () => {
+  setTimeout(setHeroViewportHeight, 100);
+});
+
+// Update on visual viewport changes (mobile browser UI)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    window.requestAnimationFrame(setHeroViewportHeight);
+  });
+}
+
 const faders = Array.from(document.querySelectorAll('.fade'));
 
 if ('IntersectionObserver' in window) {

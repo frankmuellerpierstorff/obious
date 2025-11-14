@@ -658,6 +658,14 @@ footer.snap-section {
     gap: 72px;
   }
 
+  .two-col__item {
+    gap: 16px;
+  }
+
+  .two-col__item .section__title {
+    margin-bottom: 0;
+  }
+
   .hero__headline {
     font-size: 64px;
     line-height: 1.04;
@@ -779,9 +787,7 @@ footer.snap-section {
   }
 
   .hero {
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+    /* Height set by JavaScript using window.innerHeight */
     padding-top: 0;
     padding-bottom: 0;
     align-items: center;
@@ -844,10 +850,16 @@ footer.snap-section {
 
 @media (max-width: 480px) {
 
+  .two-col__item {
+    gap: 16px;
+  }
+
+  .two-col__item .section__title {
+    margin-bottom: 0;
+  }
+
   .hero {
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+    /* Height set by JavaScript using window.innerHeight */
     overflow: hidden;
   }
 
