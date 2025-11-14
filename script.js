@@ -67,6 +67,13 @@ const updateHeaderTheme = () => {
 };
 
 if (header) {
+  // Set initial white color immediately
+  const label = header.querySelector('.header__label');
+  const contact = header.querySelector('.header__contact');
+  header.style.color = '#fbf9f5';
+  if (label) label.style.color = '#fbf9f5';
+  if (contact) contact.style.color = '#fbf9f5';
+  
   // Run immediately on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', updateHeaderTheme);
@@ -79,6 +86,13 @@ if (header) {
   window.addEventListener('resize', updateHeaderTheme);
   // Fix for iOS overscroll - reapply theme when scroll position changes
   window.addEventListener('touchmove', () => {
+    window.requestAnimationFrame(updateHeaderTheme);
+  }, { passive: true });
+  // Fix for Chrome overscroll - reapply on any interaction
+  window.addEventListener('touchstart', () => {
+    window.requestAnimationFrame(updateHeaderTheme);
+  }, { passive: true });
+  window.addEventListener('wheel', () => {
     window.requestAnimationFrame(updateHeaderTheme);
   }, { passive: true });
 }
