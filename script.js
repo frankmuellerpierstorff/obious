@@ -39,26 +39,40 @@ const themedSections = Array.from(document.querySelectorAll('[data-header-theme]
 
 const updateHeaderTheme = () => {
   if (!header) return;
+  const label = header.querySelector('.header__label');
+  const contact = header.querySelector('.header__contact');
+  
   const headerHeight = header.getBoundingClientRect().height;
+  
   const activeSection =
     themedSections.find(section => {
       const rect = section.getBoundingClientRect();
       return rect.top <= headerHeight && rect.bottom > headerHeight;
     }) || null;
 
-  const theme = activeSection ? activeSection.getAttribute('data-header-theme') : 'light';
-  const label = header.querySelector('.header__label');
-  const contact = header.querySelector('.header__contact');
+  let theme = 'light'; // Default to light (black)
   
-  // Default: white (for blue/black backgrounds)
-  // If no dark theme section, use black (for light backgrounds)
+  if (activeSection) {
+    theme = activeSection.getAttribute('data-header-theme');
+  } else {
+    // If no active section, check if we're at the top (where hero section is)
+    const scrollY = window.scrollY || window.pageYOffset;
+    const isAtTop = scrollY < 100;
+    if (isAtTop) {
+      // At top, check first section (should be hero with dark theme)
+      const firstSection = themedSections[0];
+      if (firstSection && firstSection.getAttribute('data-header-theme') === 'dark') {
+        theme = 'dark';
+      }
+    }
+  }
+  
   if (theme === 'dark') {
     header.classList.add('header--inverse');
     header.style.color = '#fbf9f5';
     if (label) label.style.color = '#fbf9f5';
     if (contact) contact.style.color = '#fbf9f5';
   } else {
-    // Light background = black text
     header.classList.remove('header--inverse');
     header.style.color = '#120f08';
     if (label) label.style.color = '#120f08';

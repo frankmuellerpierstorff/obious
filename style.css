@@ -120,7 +120,7 @@ body.legal-page .header__contact {
   font-weight: 700;
   letter-spacing: -0.24px;
   text-decoration: none;
-  color: inherit;
+  color: #fbf9f5;
   transition: opacity 0.2s ease;
   margin: 0;
 }
@@ -143,7 +143,7 @@ body.legal-page .header__contact {
 .header__contact {
   font-size: 20px;
   font-weight: 400;
-  color: inherit;
+  color: #fbf9f5;
   text-decoration: none;
   transition: opacity 0.2s ease;
   margin: 0;
