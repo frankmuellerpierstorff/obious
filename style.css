@@ -685,12 +685,6 @@ footer.snap-section {
 @media (max-width: 768px) {
   .header {
     padding: 20px 0 0;
-    color: #fbf9f5 !important;
-  }
-
-  .header__label,
-  .header__contact {
-    color: #fbf9f5 !important;
   }
 
   .header__inner {
@@ -843,14 +837,6 @@ footer.snap-section {
 }
 
 @media (max-width: 480px) {
-  .header {
-    color: #fbf9f5 !important;
-  }
-
-  .header__label,
-  .header__contact {
-    color: #fbf9f5 !important;
-  }
 
   .hero:not(.legal) {
     height: 100vh;
