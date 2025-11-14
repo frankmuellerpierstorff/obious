@@ -774,9 +774,10 @@ footer.snap-section {
   }
 
   .hero {
-    padding-top: 120px;
-    padding-bottom: 120px;
+    height: 100vh;
     min-height: 100vh;
+    padding-top: 0;
+    padding-bottom: 0;
     align-items: center;
   }
 
@@ -812,8 +813,11 @@ footer.snap-section {
     margin: 0;
   }
 
-  .legal {
-    padding: 120px 0;
+  .legal.hero {
+    padding-top: 140px;
+    padding-bottom: 120px;
+    height: auto;
+    min-height: auto;
   }
 
   .legal__title {

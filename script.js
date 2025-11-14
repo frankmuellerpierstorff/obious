@@ -50,16 +50,19 @@ const updateHeaderTheme = () => {
   const label = header.querySelector('.header__label');
   const contact = header.querySelector('.header__contact');
   
+  // Default: white (for blue/black backgrounds)
+  // If no dark theme section, use black (for light backgrounds)
   if (theme === 'dark') {
     header.classList.add('header--inverse');
     header.style.color = '#fbf9f5';
     if (label) label.style.color = '#fbf9f5';
     if (contact) contact.style.color = '#fbf9f5';
   } else {
+    // Light background = black text
     header.classList.remove('header--inverse');
-    header.style.color = 'var(--text-dark)';
-    if (label) label.style.color = 'var(--text-dark)';
-    if (contact) contact.style.color = 'var(--text-dark)';
+    header.style.color = '#120f08';
+    if (label) label.style.color = '#120f08';
+    if (contact) contact.style.color = '#120f08';
   }
 };
 
