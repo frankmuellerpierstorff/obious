@@ -672,8 +672,7 @@ footer.snap-section {
     letter-spacing: -2px;
   }
 
-  .section__title,
-  .principles__item {
+  .section__title {
     font-size: 40px;
   }
 
@@ -757,7 +756,7 @@ footer.snap-section {
   }
 
   .principles__item {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .section__header {
@@ -887,7 +886,7 @@ footer.snap-section {
   }
 
   .principles__item {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .section__header {
