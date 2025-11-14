@@ -781,9 +781,11 @@ footer.snap-section {
   .hero {
     height: 100vh;
     min-height: 100vh;
+    max-height: 100vh;
     padding-top: 0;
     padding-bottom: 0;
     align-items: center;
+    overflow: hidden;
   }
 
   .hero__content {
@@ -845,6 +847,8 @@ footer.snap-section {
   .hero {
     height: 100vh;
     min-height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
   }
 
   .hero__headline {
