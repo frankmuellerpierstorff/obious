@@ -317,7 +317,7 @@ footer.snap-section {
 }
 
 .companies {
-  background: #d6d8db;
+  background: #c8c8c8;
 }
 
 .companies__list {
@@ -493,6 +493,10 @@ footer.snap-section {
 
   .section__title {
     font-size: 64px;
+  }
+
+  .companies__list {
+    font-size: 62px;
   }
 
   .principles__item {
