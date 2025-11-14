@@ -7,9 +7,15 @@
   --bg-base: #d6d8db;
   --bg-neutral: #d6d8db;
   --bg-dark: #120f08;
-  --bg-accent: #1e00ff;
+  --bg-accent: rgb(30, 0, 255);
   --text-dark: #120f08;
   --text-light: #fbf9f5;
+}
+
+@supports (color: color(display-p3 0 0 0)) {
+  :root {
+    --bg-accent: color(display-p3 0.1176 0 1);
+  }
 }
 
 *,
@@ -151,7 +157,7 @@ footer.snap-section {
 
 .hero {
   position: relative;
-  background: #1e00ff;
+  background: rgb(30, 0, 255);
   padding: 0;
   display: flex;
   align-items: center;
@@ -337,7 +343,7 @@ footer.snap-section {
 }
 
 .principles {
-  background: #1e00ff;
+  background: rgb(30, 0, 255);
   color: #fbf9f5;
 }
 
@@ -372,7 +378,7 @@ footer.snap-section {
 }
 
 .footer {
-  background: #1e00ff;
+  background: rgb(30, 0, 255);
   padding: 120px 0;
   width: 100%;
   color: #fbf9f5;
