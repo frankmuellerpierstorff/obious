@@ -49,13 +49,40 @@ if ('IntersectionObserver' in window) {
   const prepareFader = el => {
     el.classList.add('fade-ready');
     el.classList.remove('visible');
+    
+    // Check if element is already in viewport (especially important for hero on mobile)
+    const checkInitialVisibility = () => {
+      const rect = el.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      
+      if (isVisible && el.classList.contains('fade-ready') && !el.classList.contains('visible')) {
+        // Element is already in viewport, trigger animation immediately
+        requestAnimationFrame(() => {
+          el.classList.add('visible');
+        });
+      }
+    };
+    
     observer.observe(el);
+    
+    // Check immediately and after a short delay to catch mobile browser timing issues
+    checkInitialVisibility();
+    requestAnimationFrame(() => {
+      checkInitialVisibility();
+    });
+  };
+
+  const initFaders = () => {
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      faders.forEach(prepareFader);
+    });
   };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => faders.forEach(prepareFader));
+    document.addEventListener('DOMContentLoaded', initFaders);
   } else {
-    faders.forEach(prepareFader);
+    initFaders();
   }
 } else {
   // Fallback: ensure elements are visible without animation
