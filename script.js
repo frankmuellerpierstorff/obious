@@ -139,3 +139,72 @@ if (header) {
     window.requestAnimationFrame(updateHeaderTheme);
   }, { passive: true });
 }
+
+// Smooth scroll for anchor links
+const smoothScrollTo = (targetId) => {
+  const target = document.querySelector(targetId);
+  if (!target) return;
+  
+  const header = document.querySelector('.header');
+  const headerHeight = header ? header.getBoundingClientRect().height : 0;
+  const viewportHeight = window.innerHeight;
+  const availableHeight = viewportHeight - headerHeight;
+  
+  // Get target's position relative to document
+  const targetRect = target.getBoundingClientRect();
+  const targetTop = targetRect.top + window.pageYOffset;
+  const targetBottom = targetRect.bottom + window.pageYOffset;
+  const targetHeight = targetRect.height;
+  
+  let targetPosition;
+  
+  if (targetHeight <= availableHeight) {
+    // Block fits in available viewport: position so entire block is visible
+    // Position block so it starts just below header
+    targetPosition = targetTop - headerHeight;
+    
+    // Ensure the bottom of the block doesn't go below viewport
+    const finalBottom = targetPosition + targetHeight;
+    const viewportBottom = viewportHeight;
+    if (finalBottom > viewportBottom) {
+      // Adjust so bottom of block aligns with bottom of viewport
+      targetPosition = targetBottom - viewportHeight;
+    }
+  } else {
+    // Block is taller than available viewport: position it at the top (below header)
+    targetPosition = targetTop - headerHeight;
+  }
+  
+  // Ensure we scroll enough so the previous section is completely out of view
+  // Find the section that comes before the target
+  const allSections = Array.from(document.querySelectorAll('section'));
+  const targetIndex = allSections.indexOf(target);
+  
+  if (targetIndex > 0) {
+    const previousSection = allSections[targetIndex - 1];
+    if (previousSection) {
+      const previousBottom = previousSection.getBoundingClientRect().bottom + window.pageYOffset;
+      // Make sure we scroll past the previous section completely
+      if (targetPosition < previousBottom) {
+        targetPosition = previousBottom;
+      }
+    }
+  }
+  
+  window.scrollTo({
+    top: Math.max(0, targetPosition),
+    behavior: 'smooth'
+  });
+};
+
+// Handle anchor link clicks with smooth scroll
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+  
+  const href = link.getAttribute('href');
+  if (href === '#' || href === '') return;
+  
+  e.preventDefault();
+  smoothScrollTo(href);
+}, true);
