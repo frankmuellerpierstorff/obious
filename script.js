@@ -1,8 +1,11 @@
 // Fade / slide handling
-document.documentElement.classList.add('js');
+// Add 'js' class immediately to ensure CSS rules apply
+if (document.documentElement) {
+  document.documentElement.classList.add('js');
+}
 
-// Set hero height to viewport height (mobile only)
-const setHeroViewportHeight = () => {
+// Set hero height to viewport height (mobile only) - only once on initial load
+const initHeroViewportHeight = () => {
   const hero = document.querySelector('.hero:not(.legal)');
   if (!hero) return;
   
@@ -20,32 +23,11 @@ const setHeroViewportHeight = () => {
   }
 };
 
-// Run immediately and on load/resize
-const initHeroHeight = () => {
-  setHeroViewportHeight();
-};
-
-// Run immediately if DOM is ready
+// Run only once on initial load
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHeroHeight);
+  document.addEventListener('DOMContentLoaded', initHeroViewportHeight);
 } else {
-  initHeroHeight();
-}
-
-window.addEventListener('resize', () => {
-  window.requestAnimationFrame(setHeroViewportHeight);
-}, { passive: true });
-
-// Also update on orientation change (mobile)
-window.addEventListener('orientationchange', () => {
-  setTimeout(setHeroViewportHeight, 100);
-});
-
-// Update on visual viewport changes (mobile browser UI)
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    window.requestAnimationFrame(setHeroViewportHeight);
-  });
+  initHeroViewportHeight();
 }
 
 const faders = Array.from(document.querySelectorAll('.fade'));
