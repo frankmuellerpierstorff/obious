@@ -23,28 +23,9 @@ const initHeroViewportHeight = () => {
   }
 };
 
-// STEP 2: Get fade elements (CSS already hides them via .js .fade:not(.fade-ready))
+// STEP 2: Get fade elements
 const getFadeElements = () => {
   return Array.from(document.querySelectorAll('.fade'));
-};
-
-// Force a one-time hero intro animation (especially for mobile / iOS)
-const forceHeroIntro = () => {
-  const hero = document.querySelector('.hero.fade');
-  if (!hero) return;
-  if (!hero.classList.contains('fade-ready')) return;
-
-  // Erstmal sicherstellen, dass Hero NICHT sichtbar ist
-  hero.classList.remove('visible');
-
-  // Force Reflow, damit Browser den "hidden"-State wirklich rendert
-  // (wichtig für iOS / Mobile)
-  void hero.offsetWidth;
-
-  // Dann leicht verzögert sichtbar machen → Transition kann greifen
-  setTimeout(() => {
-    hero.classList.add('visible');
-  }, 150); // 100–200ms ist sweet spot
 };
 
 // STEP 3: Initialize faders and animate
@@ -74,120 +55,17 @@ const initFadeAnimations = (faders) => {
     // Setup all faders
     faders.forEach(setupFader);
     
-    // Force layout to ensure browser renders initial hidden state
-    const forceLayout = (el) => {
-      if (el) {
-        el.getBoundingClientRect();
-        const target = el.querySelector('.fade-target');
-        if (target) {
-          target.getBoundingClientRect();
-        }
-      }
-    };
+    // Animate hero and header exactly once in the first animation frame
+    const hero = document.querySelector('.hero.fade');
+    const header = document.querySelector('.header.fade');
     
-    // STEP 4: Animate elements that are already in viewport
-    const animateVisibleElements = () => {
-      // Special handling for header (always visible on load, position: fixed)
-      const header = document.querySelector('.header.fade');
-      if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
-        forceLayout(header);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            header.classList.add('visible');
-          });
-        });
-      }
-      
-      // Special handling for hero section (always visible on load)
-      // CRITICAL: Delay to allow browser to render initial hidden state first
-      const hero = document.querySelector('.hero.fade');
-      if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
-        forceLayout(hero);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            hero.classList.add('visible');
-          });
-        });
-      }
-      
-      // Check other elements
-      faders.forEach(el => {
-        // Skip header and hero (already handled)
-        if (el === header || el === hero) return;
-        
-        if (!el.classList.contains('fade-ready')) return;
-        if (el.classList.contains('visible')) return;
-        
-        const rect = el.getBoundingClientRect();
-        const isInViewport = (
-          rect.top < window.innerHeight * 1.5 &&
-          rect.bottom > -window.innerHeight * 0.5 &&
-          rect.left < window.innerWidth &&
-          rect.right > 0
-        );
-        
-        if (isInViewport) {
-          el.classList.add('visible');
-        }
-      });
-    };
-    
-    // Start animations after setup is complete
-    // Use multiple approaches to ensure animations trigger reliably
-    const triggerAnimations = () => {
-      // First trigger after layout is stable
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          animateVisibleElements();
-        });
-      });
-      
-      // Additional triggers with delays for mobile
-      setTimeout(() => {
-        animateVisibleElements();
-      }, 100);
-      
-      setTimeout(() => {
-        animateVisibleElements();
-      }, 300);
-      
-      setTimeout(() => {
-        animateVisibleElements();
-      }, 500);
-    };
-    
-    // Trigger immediately
-    triggerAnimations();
-
-    // Sicherstellen, dass der Hero-Block einmal sauber animiert –
-    // unabhängig davon, ob IntersectionObserver zu früh feuert.
-    setTimeout(() => {
-      forceHeroIntro();
-    }, 200);
-    
-    // Also trigger on window load if not already complete
-    if (document.readyState !== 'complete') {
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          triggerAnimations();
-        }, 50);
-      });
+    if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
+      hero.classList.add('visible');
     }
     
-    // Handle overscroll - re-trigger animations when scrolling back to top
-    let lastScrollY = window.scrollY || window.pageYOffset;
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY || window.pageYOffset;
-      
-      // If scrolled back to top (overscroll recovery)
-      if (currentScrollY < 50 && lastScrollY >= 50) {
-        setTimeout(() => {
-          animateVisibleElements();
-        }, 100);
-      }
-      
-      lastScrollY = currentScrollY;
-    }, { passive: true });
+    if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
+      header.classList.add('visible');
+    }
   } else {
     // Fallback: ensure elements are visible without animation
     faders.forEach(el => {
@@ -201,24 +79,13 @@ const init = () => {
   // STEP 1: Calculate browser size and set hero height FIRST
   initHeroViewportHeight();
   
-  // STEP 2: Get fade elements (CSS already hides them via .js class)
+  // STEP 2: Get fade elements
   const faders = getFadeElements();
   
-  // STEP 3 & 4: Setup and animate after layout is stable
-  const startFadeInit = () => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        initFadeAnimations(faders);
-      });
-    });
-  };
-
-  // Mobile fix: allow layout to settle after viewport height adjustment
-  if (window.innerWidth <= 768) {
-    setTimeout(startFadeInit, 100);  // 80-120ms works best for iOS Safari
-  } else {
-    startFadeInit();
-  }
+  // STEP 3: Setup and animate after layout is stable
+  requestAnimationFrame(() => {
+    initFadeAnimations(faders);
+  });
 };
 
 // Run initialization

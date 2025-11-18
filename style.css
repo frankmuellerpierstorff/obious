@@ -341,21 +341,14 @@ footer.snap-section {
   overflow: hidden;
 }
 
-.fade-target {
+/* ALL fade-targets start fully hidden, independent of JS */
+.fade .fade-target {
+  opacity: 0;
+  transform: translateY(40px);
   transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
 }
 
-/* Initial state: hide fade elements if JS is enabled */
-.js .fade:not(.fade-ready) .fade-target {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
-.js .fade.fade-ready .fade-target {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
+/* Show when visible class is added (only when JS is enabled) */
 .js .fade.fade-ready.visible .fade-target {
   opacity: 1;
   transform: translateY(0);
