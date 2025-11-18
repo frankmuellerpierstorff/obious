@@ -33,16 +33,16 @@ const initFadeAnimations = (faders) => {
   if (!faders || faders.length === 0) return;
   
   if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(
+const observer = new IntersectionObserver(
       entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
           } else {
             entry.target.classList.remove('visible');
-          }
-        });
-      },
+      }
+    });
+  },
       { threshold: 0.1, rootMargin: '0px' }
     );
 
@@ -57,17 +57,22 @@ const initFadeAnimations = (faders) => {
     
     // STEP 4: Animate elements that are already in viewport
     const animateVisibleElements = () => {
+      // Special handling for header (always visible on load, position: fixed)
+      const header = document.querySelector('.header.fade');
+      if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
+        header.classList.add('visible');
+      }
+      
       // Special handling for hero section (always visible on load)
       const hero = document.querySelector('.hero.fade');
-      if (hero && hero.classList.contains('fade-ready')) {
-        requestAnimationFrame(() => {
-          hero.classList.add('visible');
-        });
+      if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
+        hero.classList.add('visible');
       }
       
       // Check other elements
       faders.forEach(el => {
-        if (el === hero) return; // Hero already handled
+        // Skip header and hero (already handled)
+        if (el === header || el === hero) return;
         
         if (!el.classList.contains('fade-ready')) return;
         if (el.classList.contains('visible')) return;
@@ -87,9 +92,24 @@ const initFadeAnimations = (faders) => {
     };
     
     // Wait for layout to be stable, then animate
+    // Use multiple requestAnimationFrame for mobile browsers
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         animateVisibleElements();
+        
+        // Additional check for mobile timing issues
+        setTimeout(() => {
+          const header = document.querySelector('.header.fade');
+          const hero = document.querySelector('.hero.fade');
+          
+          if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
+            header.classList.add('visible');
+          }
+          
+          if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
+            hero.classList.add('visible');
+          }
+        }, 100);
       });
     });
   } else {
