@@ -4,7 +4,7 @@ if (document.documentElement) {
   document.documentElement.classList.add('js');
 }
 
-// Set hero height to viewport height (mobile only) - only once on initial load
+// STEP 1: Calculate browser size and set hero height (mobile only)
 const initHeroViewportHeight = () => {
   const hero = document.querySelector('.hero:not(.legal)');
   if (!hero) return;
@@ -23,67 +23,49 @@ const initHeroViewportHeight = () => {
   }
 };
 
-// Run only once on initial load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHeroViewportHeight);
-} else {
-  initHeroViewportHeight();
-}
+// STEP 2: Get fade elements (CSS already hides them via .js .fade:not(.fade-ready))
+const getFadeElements = () => {
+  return Array.from(document.querySelectorAll('.fade'));
+};
 
-const faders = Array.from(document.querySelectorAll('.fade'));
+// STEP 3: Initialize faders and animate
+const initFadeAnimations = (faders) => {
+  if (!faders || faders.length === 0) return;
+  
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          } else {
+            entry.target.classList.remove('visible');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px' }
+    );
 
-// Immediately hide all fade elements to prevent FOUC
-faders.forEach(el => {
-  const target = el.querySelector('.fade-target');
-  if (target) {
-    target.style.opacity = '0';
-    target.style.transform = 'translateY(40px)';
-  }
-});
+    const setupFader = el => {
+      el.classList.add('fade-ready');
+      el.classList.remove('visible');
+      observer.observe(el);
+    };
 
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        } else {
-          entry.target.classList.remove('visible');
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px' }
-  );
-
-  const prepareFader = el => {
-    el.classList.add('fade-ready');
-    el.classList.remove('visible');
+    // Setup all faders
+    faders.forEach(setupFader);
     
-    // Remove inline styles so CSS transitions can work
-    const target = el.querySelector('.fade-target');
-    if (target) {
-      target.style.opacity = '';
-      target.style.transform = '';
-    }
-    
-    observer.observe(el);
-  };
-
-  const initFaders = () => {
-    // Prepare all faders
-    faders.forEach(prepareFader);
-    
-    // Special handling for hero section (always visible on load)
-    const hero = document.querySelector('.hero.fade');
-    if (hero) {
-      // Hero is always in viewport on initial load, animate it immediately
-      requestAnimationFrame(() => {
-        hero.classList.add('visible');
-      });
-    }
-    
-    // For other elements, check if they're already in viewport
-    const checkAndAnimate = () => {
+    // STEP 4: Animate elements that are already in viewport
+    const animateVisibleElements = () => {
+      // Special handling for hero section (always visible on load)
+      const hero = document.querySelector('.hero.fade');
+      if (hero && hero.classList.contains('fade-ready')) {
+        requestAnimationFrame(() => {
+          hero.classList.add('visible');
+        });
+      }
+      
+      // Check other elements
       faders.forEach(el => {
         if (el === hero) return; // Hero already handled
         
@@ -92,7 +74,7 @@ if ('IntersectionObserver' in window) {
         
         const rect = el.getBoundingClientRect();
         const isInViewport = (
-          rect.top < window.innerHeight * 1.5 && // More generous threshold
+          rect.top < window.innerHeight * 1.5 &&
           rect.bottom > -window.innerHeight * 0.5 &&
           rect.left < window.innerWidth &&
           rect.right > 0
@@ -104,35 +86,41 @@ if ('IntersectionObserver' in window) {
       });
     };
     
-    // Check multiple times for mobile timing
-    checkAndAnimate();
-    requestAnimationFrame(checkAndAnimate);
-    setTimeout(checkAndAnimate, 50);
-    setTimeout(checkAndAnimate, 150);
-    
-    // Also check after window load
-    if (document.readyState !== 'complete') {
-      window.addEventListener('load', () => {
-        setTimeout(checkAndAnimate, 50);
+    // Wait for layout to be stable, then animate
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        animateVisibleElements();
       });
-    }
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFaders);
+    });
   } else {
-    initFaders();
+    // Fallback: ensure elements are visible without animation
+    faders.forEach(el => {
+      el.classList.add('visible');
+    });
   }
-} else {
-  // Fallback: ensure elements are visible without animation
-  faders.forEach(el => {
-    el.classList.add('visible');
-    const target = el.querySelector('.fade-target');
-    if (target) {
-      target.style.opacity = '';
-      target.style.transform = '';
-    }
+};
+
+// Main initialization function - correct order
+const init = () => {
+  // STEP 1: Get fade elements (CSS already hides them via .js class)
+  const faders = getFadeElements();
+  
+  // STEP 2: Calculate browser size and set hero height
+  initHeroViewportHeight();
+  
+  // STEP 3 & 4: Setup and animate after layout is stable
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      initFadeAnimations(faders);
+    });
   });
+};
+
+// Run initialization
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 
 // Header theme swap (light/dark) based on overlapping section
