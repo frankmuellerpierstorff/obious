@@ -43,40 +43,62 @@ if ('IntersectionObserver' in window) {
         }
       });
     },
-    { threshold: 0.15 }
+    { threshold: 0.15, rootMargin: '0px' }
   );
 
   const prepareFader = el => {
     el.classList.add('fade-ready');
     el.classList.remove('visible');
-    
-    // Check if element is already in viewport (especially important for hero on mobile)
-    const checkInitialVisibility = () => {
-      const rect = el.getBoundingClientRect();
-      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-      
-      if (isVisible && el.classList.contains('fade-ready') && !el.classList.contains('visible')) {
-        // Element is already in viewport, trigger animation immediately
-        requestAnimationFrame(() => {
-          el.classList.add('visible');
-        });
-      }
-    };
-    
     observer.observe(el);
-    
-    // Check immediately and after a short delay to catch mobile browser timing issues
-    checkInitialVisibility();
-    requestAnimationFrame(() => {
-      checkInitialVisibility();
+  };
+
+  const checkInitialVisibility = () => {
+    faders.forEach(el => {
+      if (!el.classList.contains('fade-ready')) return;
+      
+      const rect = el.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      
+      // Check if element is in viewport (with some margin for mobile)
+      const isInViewport = (
+        rect.top < viewportHeight &&
+        rect.bottom > 0 &&
+        rect.left < viewportWidth &&
+        rect.right > 0
+      );
+      
+      if (isInViewport && !el.classList.contains('visible')) {
+        // Element is already in viewport, trigger animation immediately
+        el.classList.add('visible');
+      }
     });
   };
 
   const initFaders = () => {
-    // Use requestAnimationFrame to ensure layout is complete
+    // Prepare all faders first
+    faders.forEach(prepareFader);
+    
+    // Then check for initial visibility multiple times to catch mobile timing issues
+    // Check immediately
+    checkInitialVisibility();
+    
+    // Check after layout is complete
     requestAnimationFrame(() => {
-      faders.forEach(prepareFader);
+      checkInitialVisibility();
     });
+    
+    // Check again after a short delay (for mobile browsers)
+    setTimeout(() => {
+      checkInitialVisibility();
+    }, 100);
+    
+    // Also check after window load (for slow mobile connections)
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', () => {
+        setTimeout(checkInitialVisibility, 50);
+      });
+    }
   };
 
   if (document.readyState === 'loading') {
