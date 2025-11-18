@@ -26,6 +26,11 @@ const initHeroViewportHeight = () => {
 // Initialize fade animations
 const initFadeAnimations = () => {
   const faders = Array.from(document.querySelectorAll('.fade'));
+  const hero = document.querySelector('.hero.fade');
+  const header = document.querySelector('.header.fade');
+  
+  // Separate hero and header from other faders (they need special handling)
+  const otherFaders = faders.filter(el => el !== hero && el !== header);
   
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
@@ -47,17 +52,21 @@ const initFadeAnimations = () => {
       observer.observe(el);
     };
 
-    // Setup all faders
-    faders.forEach(setupFader);
+    // Setup other faders (not hero/header)
+    otherFaders.forEach(setupFader);
     
-    // Mobile fix: ensure hero animates on initial load
-    // Wait for layout to settle, then check if hero needs animation
-    setTimeout(() => {
-      const hero = document.querySelector('.hero.fade');
-      if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
-        hero.classList.add('visible');
-      }
-    }, 120);
+    // Setup hero and header separately (they're always in viewport on load)
+    if (hero) {
+      hero.classList.add('fade-ready');
+      hero.classList.remove('visible');
+      // Don't observe hero - we'll animate it manually
+    }
+    
+    if (header) {
+      header.classList.add('fade-ready');
+      header.classList.remove('visible');
+      // Don't observe header - we'll animate it manually
+    }
   } else {
     // Fallback: ensure elements are visible without animation
     faders.forEach(el => el.classList.add('visible'));
@@ -66,13 +75,14 @@ const initFadeAnimations = () => {
 
 // Main initialization function
 const init = () => {
-  // Calculate browser size and set hero height first
-  initHeroViewportHeight();
-  
-  // Initialize fade animations
+  // Initialize fade animations FIRST (sets fade-ready, hides elements)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initFadeAnimations();
+      
+      // NOW set hero height (after fade-ready is set, so hero is hidden)
+      initHeroViewportHeight();
+      
       // Force initial fade-in for header + hero (mobile + desktop)
       // ensures they start hidden and animate in the next frame
       setTimeout(() => {
@@ -94,6 +104,10 @@ const init = () => {
     });
   } else {
     initFadeAnimations();
+    
+    // NOW set hero height (after fade-ready is set, so hero is hidden)
+    initHeroViewportHeight();
+    
     // Force initial fade-in for header + hero (mobile + desktop)
     // ensures they start hidden and animate in the next frame
     setTimeout(() => {
