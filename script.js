@@ -109,53 +109,27 @@ const observer = new IntersectionObserver(
       return isBlue || hasRgb30 || notTransparent;
     };
     
-    const startAnimations = () => {
-      const tryAnimate = () => {
-        // Check if background is rendered
-        if (checkBackgroundRendered()) {
-          animateVisibleElements();
-          return true;
-        }
-        return false;
-      };
-      
-      // Wait for window load event (all resources loaded)
-      if (document.readyState !== 'complete') {
-        window.addEventListener('load', () => {
-          // Small delay, then check background and animate
-          setTimeout(() => {
-            if (!tryAnimate()) {
-              // If background check fails, animate anyway after short delay
-              setTimeout(animateVisibleElements, 100);
-            }
-          }, 100);
-        });
-      } else {
-        // Already loaded, check if background is ready
-        setTimeout(() => {
-          if (!tryAnimate()) {
-            // If background check fails, animate anyway after short delay
-            setTimeout(animateVisibleElements, 100);
-          }
-        }, 150);
-      }
-      
-      // Also use requestAnimationFrame as backup (after multiple frames)
+    // Start animations after setup is complete
+    // Use multiple approaches to ensure animations trigger on mobile
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              if (!tryAnimate()) {
-                // Fallback: animate anyway after delay
-                setTimeout(animateVisibleElements, 200);
-              }
-            });
-          });
-        });
+        animateVisibleElements();
+        
+        // Additional check for mobile timing
+        setTimeout(() => {
+          animateVisibleElements();
+        }, 200);
       });
-    };
+    });
     
-    startAnimations();
+    // Also trigger on window load if not already complete
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          animateVisibleElements();
+        }, 100);
+      });
+    }
   } else {
     // Fallback: ensure elements are visible without animation
     faders.forEach(el => {
@@ -166,11 +140,11 @@ const observer = new IntersectionObserver(
 
 // Main initialization function - correct order
 const init = () => {
-  // STEP 1: Get fade elements (CSS already hides them via .js class)
-  const faders = getFadeElements();
-  
-  // STEP 2: Calculate browser size and set hero height
+  // STEP 1: Calculate browser size and set hero height FIRST
   initHeroViewportHeight();
+  
+  // STEP 2: Get fade elements (CSS already hides them via .js class)
+  const faders = getFadeElements();
   
   // STEP 3 & 4: Setup and animate after layout is stable
   requestAnimationFrame(() => {
