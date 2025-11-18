@@ -4,7 +4,7 @@ if (document.documentElement) {
   document.documentElement.classList.add('js');
 }
 
-// Set hero height to viewport height (mobile only) - only once on initial load
+// STEP 1: Calculate browser size and set hero height (mobile only)
 const initHeroViewportHeight = () => {
   const hero = document.querySelector('.hero:not(.legal)');
   if (!hero) return;
@@ -23,76 +23,209 @@ const initHeroViewportHeight = () => {
   }
 };
 
-// Run only once on initial load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHeroViewportHeight);
-} else {
-  initHeroViewportHeight();
-}
+// STEP 2: Get fade elements (CSS already hides them via .js .fade:not(.fade-ready))
+const getFadeElements = () => {
+  return Array.from(document.querySelectorAll('.fade'));
+};
 
-const faders = Array.from(document.querySelectorAll('.fade'));
-const heroFade = document.querySelector('.hero.fade');
-const headerFade = document.querySelector('.header.fade');
+// Force a one-time hero intro animation (especially for mobile / iOS)
+const forceHeroIntro = () => {
+  const hero = document.querySelector('.hero.fade');
+  if (!hero) return;
+  if (!hero.classList.contains('fade-ready')) return;
 
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        const isHeroOrHeader = entry.target === heroFade || entry.target === headerFade;
-        
-        if (entry.isIntersecting) {
-          // For hero/header: remove and re-add visible to retrigger animation
-          if (isHeroOrHeader && entry.target.classList.contains('visible')) {
-            entry.target.classList.remove('visible');
-            // Force reflow to ensure animation retriggers
-            void entry.target.offsetWidth;
-            requestAnimationFrame(() => {
-              entry.target.classList.add('visible');
-            });
-          } else {
+  // Erstmal sicherstellen, dass Hero NICHT sichtbar ist
+  hero.classList.remove('visible');
+
+  // Force Reflow, damit Browser den "hidden"-State wirklich rendert
+  // (wichtig für iOS / Mobile)
+  void hero.offsetWidth;
+
+  // Dann leicht verzögert sichtbar machen → Transition kann greifen
+  setTimeout(() => {
+    hero.classList.add('visible');
+  }, 150); // 100–200ms ist sweet spot
+};
+
+// STEP 3: Initialize faders and animate
+const initFadeAnimations = (faders) => {
+  if (!faders || faders.length === 0) return;
+  
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-          }
-        } else {
-          // Only remove visible from other sections, not hero/header
-          if (!isHeroOrHeader) {
+          } else {
             entry.target.classList.remove('visible');
           }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px' }
+    );
+
+    const setupFader = el => {
+      el.classList.add('fade-ready');
+      el.classList.remove('visible');
+      observer.observe(el);
+    };
+
+    // Setup all faders
+    faders.forEach(setupFader);
+    
+    // Force layout to ensure browser renders initial hidden state
+    const forceLayout = (el) => {
+      if (el) {
+        el.getBoundingClientRect();
+        const target = el.querySelector('.fade-target');
+        if (target) {
+          target.getBoundingClientRect();
+        }
+      }
+    };
+    
+    // STEP 4: Animate elements that are already in viewport
+    const animateVisibleElements = () => {
+      // Special handling for header (always visible on load, position: fixed)
+      const header = document.querySelector('.header.fade');
+      if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
+        forceLayout(header);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            header.classList.add('visible');
+          });
+        });
+      }
+      
+      // Special handling for hero section (always visible on load)
+      // CRITICAL: Delay to allow browser to render initial hidden state first
+      const hero = document.querySelector('.hero.fade');
+      if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
+        forceLayout(hero);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            hero.classList.add('visible');
+          });
+        });
+      }
+      
+      // Check other elements
+      faders.forEach(el => {
+        // Skip header and hero (already handled)
+        if (el === header || el === hero) return;
+        
+        if (!el.classList.contains('fade-ready')) return;
+        if (el.classList.contains('visible')) return;
+        
+        const rect = el.getBoundingClientRect();
+        const isInViewport = (
+          rect.top < window.innerHeight * 1.5 &&
+          rect.bottom > -window.innerHeight * 0.5 &&
+          rect.left < window.innerWidth &&
+          rect.right > 0
+        );
+        
+        if (isInViewport) {
+          el.classList.add('visible');
         }
       });
-    },
-    { threshold: 0.15 }
-  );
+    };
+    
+    // Start animations after setup is complete
+    // Use multiple approaches to ensure animations trigger reliably
+    const triggerAnimations = () => {
+      // First trigger after layout is stable
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          animateVisibleElements();
+        });
+      });
+      
+      // Additional triggers with delays for mobile
+      setTimeout(() => {
+        animateVisibleElements();
+      }, 100);
+      
+      setTimeout(() => {
+        animateVisibleElements();
+      }, 300);
+      
+      setTimeout(() => {
+        animateVisibleElements();
+      }, 500);
+    };
+    
+    // Trigger immediately
+    triggerAnimations();
 
-  const prepareFader = el => {
-    el.classList.add('fade-ready');
-    // Don't remove visible from hero/header initially (CSS animation handles it)
-    if (el !== heroFade && el !== headerFade) {
-      el.classList.remove('visible');
+    // Sicherstellen, dass der Hero-Block einmal sauber animiert –
+    // unabhängig davon, ob IntersectionObserver zu früh feuert.
+    setTimeout(() => {
+      forceHeroIntro();
+    }, 200);
+    
+    // Also trigger on window load if not already complete
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          triggerAnimations();
+        }, 50);
+      });
     }
-    // Observe all elements (including hero/header for scroll-back)
-    observer.observe(el);
+    
+    // Handle overscroll - re-trigger animations when scrolling back to top
+    let lastScrollY = window.scrollY || window.pageYOffset;
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY || window.pageYOffset;
+      
+      // If scrolled back to top (overscroll recovery)
+      if (currentScrollY < 50 && lastScrollY >= 50) {
+        setTimeout(() => {
+          animateVisibleElements();
+        }, 100);
+      }
+      
+      lastScrollY = currentScrollY;
+    }, { passive: true });
+  } else {
+    // Fallback: ensure elements are visible without animation
+    faders.forEach(el => {
+      el.classList.add('visible');
+    });
+  }
+};
+
+// Main initialization function - correct order
+const init = () => {
+  // STEP 1: Calculate browser size and set hero height FIRST
+  initHeroViewportHeight();
+  
+  // STEP 2: Get fade elements (CSS already hides them via .js class)
+  const faders = getFadeElements();
+  
+  // STEP 3 & 4: Setup and animate after layout is stable
+  const startFadeInit = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        initFadeAnimations(faders);
+      });
+    });
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      faders.forEach(prepareFader);
-      // After CSS animation completes, add visible class for JS control
-      setTimeout(() => {
-        if (heroFade) heroFade.classList.add('visible');
-        if (headerFade) headerFade.classList.add('visible');
-      }, 1000); // After animation completes (0.8s + 0.2s delay)
-    });
+  // Mobile fix: allow layout to settle after viewport height adjustment
+  if (window.innerWidth <= 768) {
+    setTimeout(startFadeInit, 100);  // 80-120ms works best for iOS Safari
   } else {
-    faders.forEach(prepareFader);
-    // After CSS animation completes, add visible class for JS control
-    setTimeout(() => {
-      if (heroFade) heroFade.classList.add('visible');
-      if (headerFade) headerFade.classList.add('visible');
-    }, 1000);
+    startFadeInit();
   }
+};
+
+// Run initialization
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-  // Fallback: ensure elements are visible without animation
-  faders.forEach(el => el.classList.add('visible'));
+  init();
 }
 
 // Header theme swap (light/dark) based on overlapping section
