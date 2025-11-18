@@ -32,6 +32,15 @@ if (document.readyState === 'loading') {
 
 const faders = Array.from(document.querySelectorAll('.fade'));
 
+// Immediately hide all fade elements to prevent FOUC
+faders.forEach(el => {
+  const target = el.querySelector('.fade-target');
+  if (target) {
+    target.style.opacity = '0';
+    target.style.transform = 'translateY(40px)';
+  }
+});
+
 if ('IntersectionObserver' in window) {
   const observer = new IntersectionObserver(
     entries => {
@@ -43,60 +52,68 @@ if ('IntersectionObserver' in window) {
         }
       });
     },
-    { threshold: 0.15, rootMargin: '0px' }
+    { threshold: 0.1, rootMargin: '0px' }
   );
 
   const prepareFader = el => {
     el.classList.add('fade-ready');
     el.classList.remove('visible');
+    
+    // Remove inline styles so CSS transitions can work
+    const target = el.querySelector('.fade-target');
+    if (target) {
+      target.style.opacity = '';
+      target.style.transform = '';
+    }
+    
     observer.observe(el);
   };
 
-  const checkInitialVisibility = () => {
-    faders.forEach(el => {
-      if (!el.classList.contains('fade-ready')) return;
-      
-      const rect = el.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const viewportWidth = window.innerWidth;
-      
-      // Check if element is in viewport (with some margin for mobile)
-      const isInViewport = (
-        rect.top < viewportHeight &&
-        rect.bottom > 0 &&
-        rect.left < viewportWidth &&
-        rect.right > 0
-      );
-      
-      if (isInViewport && !el.classList.contains('visible')) {
-        // Element is already in viewport, trigger animation immediately
-        el.classList.add('visible');
-      }
-    });
-  };
-
   const initFaders = () => {
-    // Prepare all faders first
+    // Prepare all faders
     faders.forEach(prepareFader);
     
-    // Then check for initial visibility multiple times to catch mobile timing issues
-    // Check immediately
-    checkInitialVisibility();
+    // Special handling for hero section (always visible on load)
+    const hero = document.querySelector('.hero.fade');
+    if (hero) {
+      // Hero is always in viewport on initial load, animate it immediately
+      requestAnimationFrame(() => {
+        hero.classList.add('visible');
+      });
+    }
     
-    // Check after layout is complete
-    requestAnimationFrame(() => {
-      checkInitialVisibility();
-    });
+    // For other elements, check if they're already in viewport
+    const checkAndAnimate = () => {
+      faders.forEach(el => {
+        if (el === hero) return; // Hero already handled
+        
+        if (!el.classList.contains('fade-ready')) return;
+        if (el.classList.contains('visible')) return;
+        
+        const rect = el.getBoundingClientRect();
+        const isInViewport = (
+          rect.top < window.innerHeight * 1.5 && // More generous threshold
+          rect.bottom > -window.innerHeight * 0.5 &&
+          rect.left < window.innerWidth &&
+          rect.right > 0
+        );
+        
+        if (isInViewport) {
+          el.classList.add('visible');
+        }
+      });
+    };
     
-    // Check again after a short delay (for mobile browsers)
-    setTimeout(() => {
-      checkInitialVisibility();
-    }, 100);
+    // Check multiple times for mobile timing
+    checkAndAnimate();
+    requestAnimationFrame(checkAndAnimate);
+    setTimeout(checkAndAnimate, 50);
+    setTimeout(checkAndAnimate, 150);
     
-    // Also check after window load (for slow mobile connections)
+    // Also check after window load
     if (document.readyState !== 'complete') {
       window.addEventListener('load', () => {
-        setTimeout(checkInitialVisibility, 50);
+        setTimeout(checkAndAnimate, 50);
       });
     }
   };
@@ -108,7 +125,14 @@ if ('IntersectionObserver' in window) {
   }
 } else {
   // Fallback: ensure elements are visible without animation
-  faders.forEach(el => el.classList.add('visible'));
+  faders.forEach(el => {
+    el.classList.add('visible');
+    const target = el.querySelector('.fade-target');
+    if (target) {
+      target.style.opacity = '';
+      target.style.transform = '';
+    }
+  });
 }
 
 // Header theme swap (light/dark) based on overlapping section
