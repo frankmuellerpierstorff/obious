@@ -1,290 +1,125 @@
-// Fade / slide handling
-// Add 'js' class immediately to ensure CSS rules apply
-if (document.documentElement) {
-  document.documentElement.classList.add('js');
+document.documentElement.classList.add('js');
+
+/* ——————————————————————————————
+   HERO HEIGHT — MUST RUN BEFORE ANY ANIMATION
+—————————————————————————————— */
+function initHeroViewportHeight() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+
+  hero.style.height = '';
+  hero.style.minHeight = '';
+  hero.style.maxHeight = '';
+
+  const viewportHeight = window.innerHeight;
+  hero.style.height = `${viewportHeight}px`;
+  hero.style.minHeight = `${viewportHeight}px`;
+  hero.style.maxHeight = `${viewportHeight}px`;
 }
 
-// Set hero height to viewport height (mobile only) - only once on initial load
-const initHeroViewportHeight = () => {
-  const hero = document.querySelector('.hero:not(.legal)');
-  if (!hero) return;
-  
-  // Only apply on mobile (max-width: 768px)
-  if (window.innerWidth <= 768) {
-    const viewportHeight = window.innerHeight;
-    hero.style.height = `${viewportHeight}px`;
-    hero.style.minHeight = `${viewportHeight}px`;
-    hero.style.maxHeight = `${viewportHeight}px`;
-  } else {
-    // Reset for desktop
-    hero.style.height = '';
-    hero.style.minHeight = '';
-    hero.style.maxHeight = '';
-  }
-};
-
-// Initialize fade animations
-const initFadeAnimations = () => {
-  const faders = Array.from(document.querySelectorAll('.fade'));
+/* ——————————————————————————————
+   FADE IN ANIMATIONS
+—————————————————————————————— */
+function initFadeAnimations() {
+  const faders = [...document.querySelectorAll('.fade')];
   const hero = document.querySelector('.hero.fade');
   const header = document.querySelector('.header.fade');
-  
-  // Separate hero and header from other faders (they need special handling)
-  const otherFaders = faders.filter(el => el !== hero && el !== header);
-  
-  if ('IntersectionObserver' in window) {
-const observer = new IntersectionObserver(
-      entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-          } else {
-            entry.target.classList.remove('visible');
-      }
-    });
-  },
-      { threshold: 0.15 }
-    );
 
-    const setupFader = el => {
-      el.classList.add('fade-ready');
-      el.classList.remove('visible');
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  faders.forEach(el => {
+    el.classList.add('fade-ready');
+    if (el !== hero && el !== header) {
       observer.observe(el);
-    };
-
-    // Setup other faders (not hero/header)
-    otherFaders.forEach(setupFader);
-    
-    // Setup hero and header separately (they're always in viewport on load)
-    if (hero) {
-      hero.classList.add('fade-ready');
-      hero.classList.remove('visible');
-      // Don't observe hero - we'll animate it manually
     }
-    
-    if (header) {
-      header.classList.add('fade-ready');
-      header.classList.remove('visible');
-      // Don't observe header - we'll animate it manually
-    }
-  } else {
-    // Fallback: ensure elements are visible without animation
-    faders.forEach(el => el.classList.add('visible'));
-  }
-};
+  });
 
-// Main initialization function
-const init = () => {
-  // Initialize fade animations FIRST (sets fade-ready, hides elements)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initFadeAnimations();
-      
-      // Force initial fade-in for header + hero (mobile + desktop)
-      // ensures they start hidden and animate in the next frame
-      setTimeout(() => {
-        const hero = document.querySelector('.hero.fade');
-        const header = document.querySelector('.header.fade');
-
-        if (hero && hero.classList.contains('fade-ready')) {
-          hero.classList.remove('visible');      // force hidden state
-          void hero.offsetWidth;                 // reflow
-          hero.classList.add('visible');         // animate
-        }
-
-        if (header && header.classList.contains('fade-ready')) {
-          header.classList.remove('visible');    // force hidden state
-          void header.offsetWidth;               // reflow
-          header.classList.add('visible');       // animate
-        }
-      }, 0);
-      
-      // Run hero height AFTER hero animation has fully finished
-      // Mobile Safari fix: prevents first-paint lock
-      setTimeout(() => {
-        initHeroViewportHeight();
-      }, 800); // 800ms = after your 0.9s fade target animation
-    });
-  } else {
-    initFadeAnimations();
-    
-    // Force initial fade-in for header + hero (mobile + desktop)
-    // ensures they start hidden and animate in the next frame
-    setTimeout(() => {
-      const hero = document.querySelector('.hero.fade');
-      const header = document.querySelector('.header.fade');
-
-      if (hero && hero.classList.contains('fade-ready')) {
-        hero.classList.remove('visible');      // force hidden state
-        void hero.offsetWidth;                 // reflow
-        hero.classList.add('visible');         // animate
-      }
-
-      if (header && header.classList.contains('fade-ready')) {
-        header.classList.remove('visible');    // force hidden state
-        void header.offsetWidth;               // reflow
-        header.classList.add('visible');       // animate
-      }
-    }, 0);
-    
-    // Run hero height AFTER hero animation has fully finished
-    // Mobile Safari fix: prevents first-paint lock
-    setTimeout(() => {
-      initHeroViewportHeight();
-    }, 800); // 800ms = after your 0.9s fade target animation
-  }
-};
-
-// Run initialization
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+  // Hero + header fade in AFTER first layout frame
+  requestAnimationFrame(() => {
+    hero?.classList.add('visible');
+    header?.classList.add('visible');
+  });
 }
 
-// Header theme swap (light/dark) based on overlapping section
-const header = document.querySelector('.header');
-const themedSections = Array.from(document.querySelectorAll('[data-header-theme]'));
+/* ——————————————————————————————
+   SMOOTH SCROLL FOR HERO ARROW + CONTACT LINK
+—————————————————————————————— */
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', e => {
+      const target = document.querySelector(anchor.getAttribute('href'));
+      if (!target) return;
 
-const updateHeaderTheme = () => {
+      e.preventDefault();
+
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+  });
+}
+
+/* ——————————————————————————————
+   HEADER THEME SWITCH
+—————————————————————————————— */
+function updateHeaderTheme() {
+  const header = document.querySelector('.header');
   if (!header) return;
+
   const label = header.querySelector('.header__label');
   const contact = header.querySelector('.header__contact');
-  
+  const themedSections = [...document.querySelectorAll('[data-header-theme]')];
+
   const headerHeight = header.getBoundingClientRect().height;
-  
+
   const activeSection =
     themedSections.find(section => {
       const rect = section.getBoundingClientRect();
       return rect.top <= headerHeight && rect.bottom > headerHeight;
     }) || null;
 
-  let theme = 'light'; // Default to light (black)
-  
-  if (activeSection) {
-    theme = activeSection.getAttribute('data-header-theme');
-  } else {
-    // If no active section, check if we're at the top (where hero section is)
-    const scrollY = window.scrollY || window.pageYOffset;
-    const isAtTop = scrollY < 100;
-    if (isAtTop) {
-      // At top, check first section (should be hero with dark theme)
-      const firstSection = themedSections[0];
-      if (firstSection && firstSection.getAttribute('data-header-theme') === 'dark') {
-        theme = 'dark';
-      }
-    }
-  }
-  
+  const theme = activeSection
+    ? activeSection.getAttribute('data-header-theme')
+    : 'light';
+
   if (theme === 'dark') {
     header.classList.add('header--inverse');
     header.style.color = '#fbf9f5';
-    if (label) label.style.color = '#fbf9f5';
-    if (contact) contact.style.color = '#fbf9f5';
+    label.style.color = '#fbf9f5';
+    contact.style.color = '#fbf9f5';
   } else {
     header.classList.remove('header--inverse');
     header.style.color = '#120f08';
-    if (label) label.style.color = '#120f08';
-    if (contact) contact.style.color = '#120f08';
+    label.style.color = '#120f08';
+    contact.style.color = '#120f08';
   }
-};
-
-if (header) {
-  // Set initial white color immediately
-  const label = header.querySelector('.header__label');
-  const contact = header.querySelector('.header__contact');
-  header.style.color = '#fbf9f5';
-  if (label) label.style.color = '#fbf9f5';
-  if (contact) contact.style.color = '#fbf9f5';
-  
-  // Run immediately on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateHeaderTheme);
-  } else {
-    updateHeaderTheme();
-  }
-  window.addEventListener('scroll', () => {
-    window.requestAnimationFrame(updateHeaderTheme);
-  }, { passive: true });
-  window.addEventListener('resize', updateHeaderTheme);
-  // Fix for iOS overscroll - reapply theme when scroll position changes
-  window.addEventListener('touchmove', () => {
-    window.requestAnimationFrame(updateHeaderTheme);
-  }, { passive: true });
-  // Fix for Chrome overscroll - reapply on any interaction
-  window.addEventListener('touchstart', () => {
-    window.requestAnimationFrame(updateHeaderTheme);
-  }, { passive: true });
-  window.addEventListener('wheel', () => {
-    window.requestAnimationFrame(updateHeaderTheme);
-  }, { passive: true });
 }
 
-// Smooth scroll for anchor links
-const smoothScrollTo = (targetId) => {
-  const target = document.querySelector(targetId);
-  if (!target) return;
-  
-  const header = document.querySelector('.header');
-  const headerHeight = header ? header.getBoundingClientRect().height : 0;
-  const viewportHeight = window.innerHeight;
-  const availableHeight = viewportHeight - headerHeight;
-  
-  // Get target's position relative to document
-  const targetRect = target.getBoundingClientRect();
-  const targetTop = targetRect.top + window.pageYOffset;
-  const targetBottom = targetRect.bottom + window.pageYOffset;
-  const targetHeight = targetRect.height;
-  
-  let targetPosition;
-  
-  if (targetHeight <= availableHeight) {
-    // Block fits in available viewport: position so entire block is visible
-    // Position block so it starts just below header
-    targetPosition = targetTop - headerHeight;
-    
-    // Ensure the bottom of the block doesn't go below viewport
-    const finalBottom = targetPosition + targetHeight;
-    const viewportBottom = viewportHeight;
-    if (finalBottom > viewportBottom) {
-      // Adjust so bottom of block aligns with bottom of viewport
-      targetPosition = targetBottom - viewportHeight;
-    }
-  } else {
-    // Block is taller than available viewport: position it at the top (below header)
-    targetPosition = targetTop - headerHeight;
-  }
-  
-  // Ensure we scroll enough so the previous section is completely out of view
-  // Find the section that comes before the target
-  const allSections = Array.from(document.querySelectorAll('section'));
-  const targetIndex = allSections.indexOf(target);
-  
-  if (targetIndex > 0) {
-    const previousSection = allSections[targetIndex - 1];
-    if (previousSection) {
-      const previousBottom = previousSection.getBoundingClientRect().bottom + window.pageYOffset;
-      // Make sure we scroll past the previous section completely
-      if (targetPosition < previousBottom) {
-        targetPosition = previousBottom;
-      }
-    }
-  }
-  
-  window.scrollTo({
-    top: Math.max(0, targetPosition),
-    behavior: 'smooth'
-  });
-};
+/* ——————————————————————————————
+   INIT
+—————————————————————————————— */
 
-// Handle anchor link clicks with smooth scroll
-document.addEventListener('click', (e) => {
-  const link = e.target.closest('a[href^="#"]');
-  if (!link) return;
-  
-  const href = link.getAttribute('href');
-  if (href === '#' || href === '') return;
-  
-  e.preventDefault();
-  smoothScrollTo(href);
-}, true);
+document.addEventListener('DOMContentLoaded', () => {
+  initHeroViewportHeight();   // Height BEFORE animations
+  initFadeAnimations();       // Fade-in system
+  initSmoothScroll();         // Hero arrow + contact smooth scroll
+  updateHeaderTheme();        // Initial header theme
+});
+
+window.addEventListener('resize', initHeroViewportHeight);
+
+window.addEventListener(
+  'scroll',
+  () => requestAnimationFrame(updateHeaderTheme),
+  { passive: true }
+);
