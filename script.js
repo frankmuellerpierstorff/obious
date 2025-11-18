@@ -55,18 +55,40 @@ const observer = new IntersectionObserver(
     // Setup all faders
     faders.forEach(setupFader);
     
+    // Force layout to ensure browser renders initial hidden state
+    const forceLayout = (el) => {
+      if (el) {
+        el.getBoundingClientRect();
+        const target = el.querySelector('.fade-target');
+        if (target) {
+          target.getBoundingClientRect();
+        }
+      }
+    };
+    
     // STEP 4: Animate elements that are already in viewport
     const animateVisibleElements = () => {
       // Special handling for header (always visible on load, position: fixed)
       const header = document.querySelector('.header.fade');
       if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
-        header.classList.add('visible');
+        forceLayout(header);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            header.classList.add('visible');
+          });
+        });
       }
       
       // Special handling for hero section (always visible on load)
+      // CRITICAL: Delay to allow browser to render initial hidden state first
       const hero = document.querySelector('.hero.fade');
       if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
-        hero.classList.add('visible');
+        forceLayout(hero);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            hero.classList.add('visible');
+          });
+        });
       }
       
       // Check other elements
