@@ -91,45 +91,56 @@ const observer = new IntersectionObserver(
       });
     };
     
-    // Wait for everything to be fully loaded before animating
-    // This ensures background colors and styles are rendered
-    const checkBackgroundRendered = () => {
-      const hero = document.querySelector('.hero.fade');
-      if (!hero) return true;
+    // Start animations after setup is complete
+    // Use multiple approaches to ensure animations trigger reliably
+    const triggerAnimations = () => {
+      // First trigger after layout is stable
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          animateVisibleElements();
+        });
+      });
       
-      const computedStyle = window.getComputedStyle(hero);
-      const bgColor = computedStyle.backgroundColor;
+      // Additional triggers with delays for mobile
+      setTimeout(() => {
+        animateVisibleElements();
+      }, 100);
       
-      // Check if blue background is rendered (rgb(30, 0, 255) or similar)
-      // Also accept rgba format
-      const isBlue = bgColor.includes('30') && bgColor.includes('255');
-      const hasRgb30 = bgColor.includes('rgb(30');
-      const notTransparent = bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent';
+      setTimeout(() => {
+        animateVisibleElements();
+      }, 300);
       
-      return isBlue || hasRgb30 || notTransparent;
+      setTimeout(() => {
+        animateVisibleElements();
+      }, 500);
     };
     
-    // Start animations after setup is complete
-    // Use multiple approaches to ensure animations trigger on mobile
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        animateVisibleElements();
-        
-        // Additional check for mobile timing
-        setTimeout(() => {
-          animateVisibleElements();
-        }, 200);
-      });
-    });
+    // Trigger immediately
+    triggerAnimations();
     
     // Also trigger on window load if not already complete
     if (document.readyState !== 'complete') {
       window.addEventListener('load', () => {
         setTimeout(() => {
-          animateVisibleElements();
-        }, 100);
+          triggerAnimations();
+        }, 50);
       });
     }
+    
+    // Handle overscroll - re-trigger animations when scrolling back to top
+    let lastScrollY = window.scrollY || window.pageYOffset;
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY || window.pageYOffset;
+      
+      // If scrolled back to top (overscroll recovery)
+      if (currentScrollY < 50 && lastScrollY >= 50) {
+        setTimeout(() => {
+          animateVisibleElements();
+        }, 100);
+      }
+      
+      lastScrollY = currentScrollY;
+    }, { passive: true });
   } else {
     // Fallback: ensure elements are visible without animation
     faders.forEach(el => {
