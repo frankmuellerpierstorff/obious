@@ -11,7 +11,12 @@ const initHeroViewportHeight = () => {
   
   // Only apply on mobile (max-width: 768px)
   if (window.innerWidth <= 768) {
-    const viewportHeight = window.innerHeight;
+    // Use multiple methods to get viewport height (Chrome vs Safari)
+    const viewportHeight = Math.max(
+      window.innerHeight,
+      window.visualViewport?.height || window.innerHeight,
+      document.documentElement.clientHeight
+    );
     hero.style.height = `${viewportHeight}px`;
     hero.style.minHeight = `${viewportHeight}px`;
     hero.style.maxHeight = `${viewportHeight}px`;
@@ -102,9 +107,39 @@ const init = () => {
 
 // Run initialization
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', () => {
+    init();
+    // Chrome fix: set height again after a short delay
+    setTimeout(() => {
+      initHeroViewportHeight();
+    }, 100);
+  });
+  // Also set height on window load (Chrome sometimes needs this)
+  window.addEventListener('load', () => {
+    initHeroViewportHeight();
+  });
 } else {
   init();
+  // Chrome fix: set height again after a short delay
+  setTimeout(() => {
+    initHeroViewportHeight();
+  }, 100);
+}
+
+// Update hero height on resize and orientation change (mobile)
+window.addEventListener('resize', () => {
+  initHeroViewportHeight();
+});
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    initHeroViewportHeight();
+  }, 100);
+});
+// Chrome mobile: visual viewport changes when address bar hides/shows
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    initHeroViewportHeight();
+  });
 }
 
 // Header theme swap (light/dark) based on overlapping section
