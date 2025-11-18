@@ -33,16 +33,16 @@ const initFadeAnimations = () => {
   const otherFaders = faders.filter(el => el !== hero && el !== header);
   
   if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(
+const observer = new IntersectionObserver(
       entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
           } else {
             entry.target.classList.remove('visible');
-          }
-        });
-      },
+      }
+    });
+  },
       { threshold: 0.15 }
     );
 
@@ -80,9 +80,6 @@ const init = () => {
     document.addEventListener('DOMContentLoaded', () => {
       initFadeAnimations();
       
-      // NOW set hero height (after fade-ready is set, so hero is hidden)
-      initHeroViewportHeight();
-      
       // Force initial fade-in for header + hero (mobile + desktop)
       // ensures they start hidden and animate in the next frame
       setTimeout(() => {
@@ -101,12 +98,15 @@ const init = () => {
           header.classList.add('visible');       // animate
         }
       }, 0);
+      
+      // Run hero height AFTER hero animation has fully finished
+      // Mobile Safari fix: prevents first-paint lock
+      setTimeout(() => {
+        initHeroViewportHeight();
+      }, 800); // 800ms = after your 0.9s fade target animation
     });
   } else {
     initFadeAnimations();
-    
-    // NOW set hero height (after fade-ready is set, so hero is hidden)
-    initHeroViewportHeight();
     
     // Force initial fade-in for header + hero (mobile + desktop)
     // ensures they start hidden and animate in the next frame
@@ -126,6 +126,12 @@ const init = () => {
         header.classList.add('visible');       // animate
       }
     }, 0);
+    
+    // Run hero height AFTER hero animation has fully finished
+    // Mobile Safari fix: prevents first-paint lock
+    setTimeout(() => {
+      initHeroViewportHeight();
+    }, 800); // 800ms = after your 0.9s fade target animation
   }
 };
 
