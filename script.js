@@ -62,7 +62,7 @@ const initFadeAnimations = (faders) => {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px' }
+      { threshold: 0.15, rootMargin: '50px' }
     );
 
     const setupFader = el => {
@@ -110,25 +110,15 @@ const initFadeAnimations = (faders) => {
         });
       }
       
-      // Check other elements
+      // Check other elements - but DON'T auto-animate on initial load
+      // Let IntersectionObserver handle all scroll-triggered animations
+      // This ensures Practice Lead and Focus Areas animate the same way
       faders.forEach(el => {
         // Skip header and hero (already handled)
         if (el === header || el === hero) return;
         
-        if (!el.classList.contains('fade-ready')) return;
-        if (el.classList.contains('visible')) return;
-        
-        const rect = el.getBoundingClientRect();
-        const isInViewport = (
-          rect.top < window.innerHeight * 1.5 &&
-          rect.bottom > -window.innerHeight * 0.5 &&
-          rect.left < window.innerWidth &&
-          rect.right > 0
-        );
-        
-        if (isInViewport) {
-          el.classList.add('visible');
-        }
+        // Don't auto-animate other elements on initial load
+        // They will be animated by IntersectionObserver when scrolling
       });
     };
     
