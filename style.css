@@ -342,7 +342,7 @@ footer.snap-section {
 }
 
 .fade-target {
-  transition: opacity 0.9s ease, transform 0.9s ease;
+  transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
 }
 
 /* Initial state: hide fade elements if JS is enabled */
