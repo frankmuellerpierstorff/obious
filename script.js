@@ -122,34 +122,22 @@ const observer = new IntersectionObserver(
       // Wait for window load event (all resources loaded)
       if (document.readyState !== 'complete') {
         window.addEventListener('load', () => {
-          // Check multiple times until background is rendered
-          let attempts = 0;
-          const maxAttempts = 10;
-          
-          const checkAndAnimate = () => {
-            if (tryAnimate() || attempts >= maxAttempts) {
-              return;
+          // Small delay, then check background and animate
+          setTimeout(() => {
+            if (!tryAnimate()) {
+              // If background check fails, animate anyway after short delay
+              setTimeout(animateVisibleElements, 100);
             }
-            attempts++;
-            setTimeout(checkAndAnimate, 50);
-          };
-          
-          setTimeout(checkAndAnimate, 100);
+          }, 100);
         });
       } else {
         // Already loaded, check if background is ready
-        let attempts = 0;
-        const maxAttempts = 10;
-        
-        const checkAndAnimate = () => {
-          if (tryAnimate() || attempts >= maxAttempts) {
-            return;
+        setTimeout(() => {
+          if (!tryAnimate()) {
+            // If background check fails, animate anyway after short delay
+            setTimeout(animateVisibleElements, 100);
           }
-          attempts++;
-          setTimeout(checkAndAnimate, 50);
-        };
-        
-        setTimeout(checkAndAnimate, 150);
+        }, 150);
       }
       
       // Also use requestAnimationFrame as backup (after multiple frames)
@@ -159,7 +147,7 @@ const observer = new IntersectionObserver(
             requestAnimationFrame(() => {
               if (!tryAnimate()) {
                 // Fallback: animate anyway after delay
-                setTimeout(animateVisibleElements, 300);
+                setTimeout(animateVisibleElements, 200);
               }
             });
           });
