@@ -33,13 +33,25 @@ const initFadeAnimations = (faders) => {
   if (!faders || faders.length === 0) return;
   
   if ('IntersectionObserver' in window) {
+    const hero = document.querySelector('.hero.fade');
+    const header = document.querySelector('.header.fade');
+    
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+          // Do NOT remove .visible from hero or header
+          if (entry.target === hero || entry.target === header) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+            // Do not remove .visible - they should stay visible
           } else {
-            entry.target.classList.remove('visible');
+            // Other sections: normal behavior
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            } else {
+              entry.target.classList.remove('visible');
+            }
           }
         });
       },
@@ -49,16 +61,16 @@ const initFadeAnimations = (faders) => {
     const setupFader = el => {
       el.classList.add('fade-ready');
       el.classList.remove('visible');
-      observer.observe(el);
+      // Do NOT observe hero or header - they are handled separately
+      if (el !== hero && el !== header) {
+        observer.observe(el);
+      }
     };
 
     // Setup all faders
     faders.forEach(setupFader);
     
-    // Animate hero and header exactly once in the first animation frame
-    const hero = document.querySelector('.hero.fade');
-    const header = document.querySelector('.header.fade');
-    
+    // Hero and header get .visible exactly once after fade-ready, before Observer
     if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
       hero.classList.add('visible');
     }
