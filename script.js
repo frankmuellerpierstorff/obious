@@ -71,9 +71,47 @@ const init = () => {
   
   // Initialize fade animations
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFadeAnimations);
+    document.addEventListener('DOMContentLoaded', () => {
+      initFadeAnimations();
+      // Force initial fade-in for header + hero (mobile + desktop)
+      // ensures they start hidden and animate in the next frame
+      setTimeout(() => {
+        const hero = document.querySelector('.hero.fade');
+        const header = document.querySelector('.header.fade');
+
+        if (hero && hero.classList.contains('fade-ready')) {
+          hero.classList.remove('visible');      // force hidden state
+          void hero.offsetWidth;                 // reflow
+          hero.classList.add('visible');         // animate
+        }
+
+        if (header && header.classList.contains('fade-ready')) {
+          header.classList.remove('visible');    // force hidden state
+          void header.offsetWidth;               // reflow
+          header.classList.add('visible');       // animate
+        }
+      }, 0);
+    });
   } else {
     initFadeAnimations();
+    // Force initial fade-in for header + hero (mobile + desktop)
+    // ensures they start hidden and animate in the next frame
+    setTimeout(() => {
+      const hero = document.querySelector('.hero.fade');
+      const header = document.querySelector('.header.fade');
+
+      if (hero && hero.classList.contains('fade-ready')) {
+        hero.classList.remove('visible');      // force hidden state
+        void hero.offsetWidth;                 // reflow
+        hero.classList.add('visible');         // animate
+      }
+
+      if (header && header.classList.contains('fade-ready')) {
+        header.classList.remove('visible');    // force hidden state
+        void header.offsetWidth;               // reflow
+        header.classList.add('visible');       // animate
+      }
+    }, 0);
   }
 };
 
