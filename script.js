@@ -180,11 +180,20 @@ const init = () => {
   const faders = getFadeElements();
   
   // STEP 3 & 4: Setup and animate after layout is stable
-  requestAnimationFrame(() => {
+  const startFadeInit = () => {
     requestAnimationFrame(() => {
-      initFadeAnimations(faders);
+      requestAnimationFrame(() => {
+        initFadeAnimations(faders);
+      });
     });
-  });
+  };
+
+  // Mobile fix: allow layout to settle after viewport height adjustment
+  if (window.innerWidth <= 768) {
+    setTimeout(startFadeInit, 100);  // 80-120ms works best for iOS Safari
+  } else {
+    startFadeInit();
+  }
 };
 
 // Run initialization
