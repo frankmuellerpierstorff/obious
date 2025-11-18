@@ -28,21 +28,40 @@ const getFadeElements = () => {
   return Array.from(document.querySelectorAll('.fade'));
 };
 
+// Force a one-time hero intro animation (especially for mobile / iOS)
+const forceHeroIntro = () => {
+  const hero = document.querySelector('.hero.fade');
+  if (!hero) return;
+  if (!hero.classList.contains('fade-ready')) return;
+
+  // Erstmal sicherstellen, dass Hero NICHT sichtbar ist
+  hero.classList.remove('visible');
+
+  // Force Reflow, damit Browser den "hidden"-State wirklich rendert
+  // (wichtig für iOS / Mobile)
+  void hero.offsetWidth;
+
+  // Dann leicht verzögert sichtbar machen → Transition kann greifen
+  setTimeout(() => {
+    hero.classList.add('visible');
+  }, 150); // 100–200ms ist sweet spot
+};
+
 // STEP 3: Initialize faders and animate
 const initFadeAnimations = (faders) => {
   if (!faders || faders.length === 0) return;
   
   if ('IntersectionObserver' in window) {
-const observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
           } else {
             entry.target.classList.remove('visible');
-      }
-    });
-  },
+          }
+        });
+      },
       { threshold: 0.1, rootMargin: '0px' }
     );
 
@@ -139,6 +158,12 @@ const observer = new IntersectionObserver(
     
     // Trigger immediately
     triggerAnimations();
+
+    // Sicherstellen, dass der Hero-Block einmal sauber animiert –
+    // unabhängig davon, ob IntersectionObserver zu früh feuert.
+    setTimeout(() => {
+      forceHeroIntro();
+    }, 200);
     
     // Also trigger on window load if not already complete
     if (document.readyState !== 'complete') {
