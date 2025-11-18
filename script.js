@@ -91,27 +91,83 @@ const observer = new IntersectionObserver(
       });
     };
     
-    // Wait for layout to be stable, then animate
-    // Use multiple requestAnimationFrame for mobile browsers
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        animateVisibleElements();
+    // Wait for everything to be fully loaded before animating
+    // This ensures background colors and styles are rendered
+    const checkBackgroundRendered = () => {
+      const hero = document.querySelector('.hero.fade');
+      if (!hero) return true;
+      
+      const computedStyle = window.getComputedStyle(hero);
+      const bgColor = computedStyle.backgroundColor;
+      
+      // Check if blue background is rendered (rgb(30, 0, 255) or similar)
+      // Also accept rgba format
+      const isBlue = bgColor.includes('30') && bgColor.includes('255');
+      const hasRgb30 = bgColor.includes('rgb(30');
+      const notTransparent = bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent';
+      
+      return isBlue || hasRgb30 || notTransparent;
+    };
+    
+    const startAnimations = () => {
+      const tryAnimate = () => {
+        // Check if background is rendered
+        if (checkBackgroundRendered()) {
+          animateVisibleElements();
+          return true;
+        }
+        return false;
+      };
+      
+      // Wait for window load event (all resources loaded)
+      if (document.readyState !== 'complete') {
+        window.addEventListener('load', () => {
+          // Check multiple times until background is rendered
+          let attempts = 0;
+          const maxAttempts = 10;
+          
+          const checkAndAnimate = () => {
+            if (tryAnimate() || attempts >= maxAttempts) {
+              return;
+            }
+            attempts++;
+            setTimeout(checkAndAnimate, 50);
+          };
+          
+          setTimeout(checkAndAnimate, 100);
+        });
+      } else {
+        // Already loaded, check if background is ready
+        let attempts = 0;
+        const maxAttempts = 10;
         
-        // Additional check for mobile timing issues
-        setTimeout(() => {
-          const header = document.querySelector('.header.fade');
-          const hero = document.querySelector('.hero.fade');
-          
-          if (header && header.classList.contains('fade-ready') && !header.classList.contains('visible')) {
-            header.classList.add('visible');
+        const checkAndAnimate = () => {
+          if (tryAnimate() || attempts >= maxAttempts) {
+            return;
           }
-          
-          if (hero && hero.classList.contains('fade-ready') && !hero.classList.contains('visible')) {
-            hero.classList.add('visible');
-          }
-        }, 100);
+          attempts++;
+          setTimeout(checkAndAnimate, 50);
+        };
+        
+        setTimeout(checkAndAnimate, 150);
+      }
+      
+      // Also use requestAnimationFrame as backup (after multiple frames)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (!tryAnimate()) {
+                // Fallback: animate anyway after delay
+                setTimeout(animateVisibleElements, 300);
+              }
+            });
+          });
+        });
       });
-    });
+    };
+    
+    startAnimations();
   } else {
     // Fallback: ensure elements are visible without animation
     faders.forEach(el => {
