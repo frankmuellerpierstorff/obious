@@ -343,21 +343,12 @@ footer.snap-section {
 
 .fade-target {
   transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
-}
-
-/* Initial state: hide fade elements (especially hero/header before JS loads) */
-.fade:not(.fade-ready) .fade-target {
+  /* ALWAYS start in hidden state - ensures transition works on mobile */
   opacity: 0;
   transform: translateY(40px);
 }
 
-/* Keep hidden state when fade-ready is set (before visible) */
-.js .fade.fade-ready .fade-target {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
-/* Show when visible class is added */
+/* Show when visible class is added (only when JS is enabled) */
 .js .fade.fade-ready.visible .fade-target {
   opacity: 1;
   transform: translateY(0);
