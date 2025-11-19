@@ -4,7 +4,60 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>This is Obvious</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- Critical CSS inline -->
+  <style>
+    /* Critical: Fade animation system */
+    .fade { overflow: hidden; }
+    .fade-target { 
+      transition: opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .js .fade.fade-ready.visible .fade-target {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Critical: Hero and Header basics */
+    .hero { 
+      position: relative;
+      background: rgb(30, 0, 255);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      color: #fbf9f5;
+    }
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 0 0;
+      z-index: 100;
+      background: transparent;
+      color: #fbf9f5;
+    }
+    .header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 40px;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Satoshi', sans-serif;
+      background: rgb(30, 0, 255);
+    }
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+  <!-- Font with display: optional for immediate rendering -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;500;700&display=optional" />
+  <link rel="stylesheet" href="../style.css" />
   <script defer src="script.js"></script>
 </head>
 <body>
@@ -66,7 +119,7 @@
 
       <section class="quote fade snap-section" data-header-theme="dark">
         <div class="container fade-target">
-          <img src="mark.png" alt="" class="quote__mark" />
+          <img src="../mark.png" alt="" class="quote__mark" />
           <blockquote class="quote__text">
             Direction is the outcome. Clarity is the way to get there.
           </blockquote>
@@ -77,7 +130,7 @@
       <section class="image-block image-block--top fade snap-section">
         <div class="container container--edge fade-target">
           <figure class="image-block__figure">
-            <img src="img1.png" alt="Team collaborating" />
+            <img src="../img1.png" alt="Team collaborating" />
           </figure>
         </div>
       </section>
@@ -187,7 +240,7 @@
       <section class="image-block image-block--bottom fade snap-section">
         <div class="container container--edge fade-target">
           <figure class="image-block__figure">
-            <img src="img2.png" alt="Work session" />
+            <img src="../img2.png" alt="Work session" />
           </figure>
         </div>
       </section>
@@ -199,15 +252,16 @@
           <span class="footer__copy">© 2025 Obvious. All rights reserved.</span>
           <nav class="footer__links">
             <a href="https://www.linkedin.com/in/frankmuellerpierstorff/" target="_blank" rel="noopener">LinkedIn</a>
-            <a href="legal.html">Legal</a>
+            <a href="../legal.html">Legal</a>
           </nav>
         </div>
         <div class="footer__divider"></div>
         <div class="footer__logo">
-          <img src="logo.png" alt="Obvious logo" />
+          <img src="../logo.png" alt="Obvious logo" />
         </div>
       </div>
     </footer>
   </div>
 </body>
 </html>
+

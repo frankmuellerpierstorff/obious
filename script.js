@@ -28,23 +28,113 @@ const getFadeElements = () => {
   return Array.from(document.querySelectorAll('.fade'));
 };
 
-// Wait for stable layout before animating
-const waitForStableLayout = async () => {
-  await new Promise(r => requestAnimationFrame(r));
-  await new Promise(r => requestAnimationFrame(r));
-
-  if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch(e) {}
+// Wait for all resources to be loaded using Performance API
+const waitForResourcesLoaded = async () => {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    await new Promise(resolve => {
+      document.addEventListener('DOMContentLoaded', resolve, { once: true });
+    });
   }
 
-  await new Promise(r => setTimeout(r, 120));
+  // Wait for fonts (with optional display, they render immediately)
+  if (document.fonts && document.fonts.ready) {
+    try {
+      await document.fonts.ready;
+    } catch(e) {}
+  }
+
+  // Wait for all resources using Performance API
+  if ('performance' in window && 'getEntriesByType' in performance) {
+    const resources = performance.getEntriesByType('resource');
+    const criticalResources = resources.filter(r => 
+      r.name.includes('.css') || 
+      r.name.includes('.png') || 
+      r.name.includes('fonts.googleapis.com')
+    );
+
+    // Wait for all critical resources
+    await Promise.all(
+      criticalResources.map(resource => {
+        return new Promise(resolve => {
+          if (resource.duration > 0) {
+            resolve(); // Already loaded
+          } else {
+            // Resource still loading, wait a bit
+            setTimeout(resolve, 100);
+          }
+        });
+      })
+    );
+  }
+
+  // Wait for layout to be stable
+  await new Promise(r => requestAnimationFrame(r));
+  await new Promise(r => requestAnimationFrame(r));
 };
 
-// Fade in hero and header on initial load
+// Wait for hero headline to be rendered using MutationObserver
+const waitForHeadlineRendered = async () => {
+  const headline = document.querySelector('.hero__headline');
+  if (!headline) return;
+
+  return new Promise((resolve) => {
+    // Check if already rendered
+    const checkRendered = () => {
+      const rect = headline.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(headline);
+      
+      if (rect.width > 0 && rect.height > 0 && computedStyle.opacity !== '0') {
+        // Force layout calculation
+        void headline.offsetWidth;
+        resolve();
+        return true;
+      }
+      return false;
+    };
+
+    if (checkRendered()) return;
+
+    // Use MutationObserver to watch for changes
+    const observer = new MutationObserver(() => {
+      if (checkRendered()) {
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(headline, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+
+    // Fallback timeout
+    setTimeout(() => {
+      observer.disconnect();
+      resolve();
+    }, 2000);
+  });
+};
+
+// Smart wait: combines all waiting strategies
+const smartWait = async () => {
+  await waitForResourcesLoaded();
+  await waitForHeadlineRendered();
+  
+  // Final delay for mobile Safari
+  await new Promise(r => setTimeout(r, 100));
+};
+
+// Fade in hero and header after smart wait
 const fadeInInitialElements = async () => {
   const hero = document.querySelector('.hero.fade');
   const header = document.querySelector('.header.fade');
-  await waitForStableLayout();
+  
+  // Smart wait for everything to be ready
+  await smartWait();
+  
+  // Now fade in
   if (header) header.classList.add('visible');
   if (hero) hero.classList.add('visible');
 };
@@ -94,7 +184,7 @@ const init = () => {
   // STEP 3: Setup fade animations
   initFadeAnimations(faders);
   
-  // Fade in hero and header after stable layout
+  // Fade in hero and header after smart wait
   fadeInInitialElements();
 };
 
@@ -251,3 +341,4 @@ document.addEventListener('click', (e) => {
   e.preventDefault();
   smoothScrollTo(href);
 }, true);
+
