@@ -1310,7 +1310,7 @@ footer.snap-section {
   }
 
   .image-block--top .image-block__figure img {
-    object-position: calc(50% + 100px) center;
+    object-position: calc(50% + 40px) center;
   }
 
   .image-block--bottom {
@@ -1319,7 +1319,7 @@ footer.snap-section {
   }
 
   .image-block--bottom .image-block__figure img {
-    object-position: calc(50% - 150px) center;
+    object-position: center;
   }
 
   .image-block .container--edge {
@@ -1407,8 +1407,4 @@ footer.snap-section {
     padding-top: 0;
   }
 
-}
-
-.footer {
-  margin-top: -50px;
 }
