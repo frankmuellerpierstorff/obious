@@ -447,7 +447,7 @@ footer.snap-section {
 .advisory__item-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .advisory__item-title {
@@ -557,7 +557,7 @@ footer.snap-section {
   border-bottom: 1px solid #0f0e11;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   text-align: left;
 }
 
@@ -756,6 +756,7 @@ footer.snap-section {
 
   .advisory__item-header {
     flex-shrink: 0;
+    gap: 4px;
   }
 
   .advisory__item-title {
@@ -810,10 +811,12 @@ footer.snap-section {
 
   .footer__top {
     font-size: 32px;
+    line-height: 1.4;
+    letter-spacing: 0;
   }
 
   .footer__divider {
-    margin-bottom: 112px;
+    margin: 32px 0 96px 0;
   }
 
   .legal {
@@ -889,14 +892,14 @@ footer.snap-section {
   }
 
   .principles__item-main {
-    font-size: 32px;
+    font-size: 40px;
     line-height: 1.4;
-    letter-spacing: -2%;
+    letter-spacing: 0;
     font-weight: 700;
   }
 
   .principles__item-sub {
-    font-size: 24px;
+    font-size: 32px;
     line-height: 1.4;
     letter-spacing: 0;
     font-weight: 400;
@@ -941,17 +944,18 @@ footer.snap-section {
 
   .advisory__item-header {
     flex-shrink: 0;
+    gap: 4px;
   }
 
   .advisory__item-title {
-    font-size: 32px;
+    font-size: 40px;
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: 0;
   }
 
   .advisory__item-duration {
-    font-size: 32px;
+    font-size: 40px;
     font-weight: 400;
     font-style: italic;
     line-height: 1.4;
@@ -959,7 +963,7 @@ footer.snap-section {
   }
 
   .advisory__item-description {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 400;
     line-height: 1.4;
     letter-spacing: 0;
@@ -979,6 +983,12 @@ footer.snap-section {
   .background__copy {
     font-size: 96px;
   }
+
+  .footer__top {
+    font-size: 32px;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
 }
 
 .footer__top {
@@ -986,8 +996,10 @@ footer.snap-section {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  font-size: 20px;
+  font-size: 32px;
   font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
   color: #fbf9f5;
 }
 
@@ -1009,7 +1021,6 @@ footer.snap-section {
 .footer__divider {
   height: 1px;
   background: #fbf9f5;
-  margin: 32px 0;
 }
 
 .footer__logo {
@@ -1259,9 +1270,21 @@ footer.snap-section {
   }
 
   .footer__top {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 16px;
+    font-size: 20px;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  .footer__copy-full {
+    display: none;
+  }
+
+  .footer__divider {
+    margin: 24px 0 32px 0;
   }
 
   .hero {
